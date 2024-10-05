@@ -33,7 +33,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -43,5 +43,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relation: Un utilisateur peut avoir plusieurs rôles.
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id');
+    }
+
+    /**
+     * Relation: Un utilisateur peut rédiger plusieurs rapports vétérinaires.
+     */
+    public function veterinaryReports()
+    {
+        return $this->hasMany(VeterinaryReport::class);
     }
 }
