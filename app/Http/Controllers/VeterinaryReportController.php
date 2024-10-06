@@ -28,6 +28,8 @@ class VeterinaryReportController extends Controller
             'date' => 'required|date',
             'details' => 'required',
             'animal_id' => 'required|exists:animals,id',
+            'user_id' => 'required|exists:users,id',
+
         ]);
 
         // Créer un nouveau rapport vétérinaire
@@ -56,6 +58,8 @@ class VeterinaryReportController extends Controller
             'date' => 'required|date',
             'details' => 'required',
             'animal_id' => 'required|exists:animals,id',
+            'user_id' => 'required|exists:users,id',
+
         ]);
 
         // Mettre à jour le rapport
