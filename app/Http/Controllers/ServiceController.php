@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Utilisé pour vérifier l'utilisateur connecté
 
 class ServiceController extends Controller
 {
@@ -14,16 +15,16 @@ class ServiceController extends Controller
         return response()->json($services);
     }
 
-    // Afficher le formulaire de création (si nécessaire, pour les applications frontend)
-    public function create()
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Enregistrer un nouveau service
+    // Enregistrer un nouveau service (admin ou employé uniquement)
     public function store(Request $request)
     {
-        // Validation des données si nécessaire
+        // Vérification des rôles (admin ou employé)
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Validation des données
         $request->validate([
             'name' => 'required|max:50',
             'description' => 'required',
@@ -41,16 +42,15 @@ class ServiceController extends Controller
         return response()->json($service);
     }
 
-    // Afficher le formulaire d'édition d'un service (si nécessaire)
-    public function edit($id)
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Mettre à jour un service spécifique
+    // Mettre à jour un service spécifique (admin ou employé uniquement)
     public function update(Request $request, $id)
     {
-        // Validation des données si nécessaire
+        // Vérification des rôles (admin ou employé)
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Validation des données
         $request->validate([
             'name' => 'required|max:50',
             'description' => 'required',
@@ -62,9 +62,15 @@ class ServiceController extends Controller
         return response()->json($service);
     }
 
-    // Supprimer un service spécifique
-    public function destroy($id)
+    // Supprimer un service spécifique (admin uniquement)
+    public function destroy(Request $request, $id,)
     {
+        // Vérification du rôle (admin uniquement)
+        if (!$request->user() || (!$request->user()->isAdmin())) {
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Supprimer le service
         $service = Service::findOrFail($id);
         $service->delete();
         return response()->json(null, 204); // Retourner une réponse vide avec un code de statut 204

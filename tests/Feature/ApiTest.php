@@ -21,13 +21,13 @@ it('can list roles', function () {
     $response->assertJsonCount(3);
 });
 
-it('can create a role', function () {
+it('can create not create a role', function () {
     $data = ['label' => 'Admin'];
 
     $response = $this->postJson('/api/roles', $data);
 
-    $response->assertStatus(201);
-    $this->assertDatabaseHas('roles', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('roles', $data);
 });
 
 it('can show a specific role', function () {
@@ -39,23 +39,23 @@ it('can show a specific role', function () {
     $response->assertJson(['id' => $role->id, 'label' => $role->label]);
 });
 
-it('can update a role', function () {
+it('can not update a role', function () {
     $role = Role::factory()->create();
     $data = ['label' => 'Updated Role'];
 
     $response = $this->putJson("/api/roles/{$role->id}", $data);
 
-    $response->assertStatus(200);
-    $this->assertDatabaseHas('roles', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('roles', $data);
 });
 
-it('can delete a role', function () {
+it('can not delete a role', function () {
     $role = Role::factory()->create();
 
     $response = $this->deleteJson("/api/roles/{$role->id}");
 
-    $response->assertStatus(204);
-    $this->assertDatabaseMissing('roles', ['id' => $role->id]);
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('roles', ['id' => $role->id]);
 });
 
 // Add similar tests for each entity
@@ -69,13 +69,14 @@ it('can list services', function () {
     $response->assertJsonCount(3);
 });
 
-it('can create a service', function () {
+it('can not create a service if not admin', function () {
     $data = ['name' => 'Service Name', 'description' => 'Service Description'];
+
 
     $response = $this->postJson('/api/services', $data);
 
-    $response->assertStatus(201);
-    $this->assertDatabaseHas('services', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('services', $data);
 });
 
 // Add more tests for each of your entities (Breeds, Images, Animals, etc.)
@@ -90,7 +91,7 @@ it('can list animals', function () {
     $response->assertJsonCount(3);
 });
 
-it('can create an animal', function () {
+it('can not create an animal', function () {
 
     $image= Image::factory()->create()->id;
     $breed= Breed::factory()->create()->id;
@@ -99,8 +100,8 @@ it('can create an animal', function () {
 
     $response = $this->postJson('/api/animals', $data);
 
-    $response->assertStatus(201);
-    $this->assertDatabaseHas('animals', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('animals', $data);
 });
 
 // Tests pour Habitat
@@ -113,32 +114,32 @@ it('can list habitats', function () {
     $response->assertJsonCount(3);
 });
 
-it('can create a habitat', function () {
+it('can not create a habitat', function () {
     $data = ['name' => 'Forest', 'description' => 'Dense forest', 'comment' => 'High humidity'];
 
     $response = $this->postJson('/api/habitats', $data);
 
-    $response->assertStatus(201);
-    $this->assertDatabaseHas('habitats', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('habitats', $data);
 });
 
-it('can update a habitat', function () {
+it('can not update a habitat', function () {
     $habitat = Habitat::factory()->create();
     $data = ['name' => 'Updated Forest', 'description' => 'Updated description'];
 
     $response = $this->putJson("/api/habitats/{$habitat->id}", $data);
 
-    $response->assertStatus(200);
-    $this->assertDatabaseHas('habitats', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('habitats', $data);
 });
 
-it('can delete a habitat', function () {
+it('can not delete a habitat', function () {
     $habitat = Habitat::factory()->create();
 
     $response = $this->deleteJson("/api/habitats/{$habitat->id}");
 
-    $response->assertStatus(204);
-    $this->assertDatabaseMissing('habitats', ['id' => $habitat->id]);
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('habitats', ['id' => $habitat->id]);
 });
 
 it('can list reviews', function () {
@@ -176,7 +177,7 @@ it('can show a specific review', function () {
 });
 
 // Test pour la mise à jour d'un avis (review)
-it('can update a review', function () {
+it('can not update a review', function () {
     $review = Review::factory()->create();  // Crée une review
 
     $data = [
@@ -188,31 +189,32 @@ it('can update a review', function () {
     // Effectue une requête PUT pour mettre à jour la review
     $response = $this->putJson("/api/reviews/{$review->id}", $data);
 
-    $response->assertStatus(200);  // Vérifie que la mise à jour est réussie avec un statut 200
-    $this->assertDatabaseHas('reviews', $data);  // Vérifie que la review mise à jour est bien enregistrée dans la base de données
+    $response->assertStatus(403);  // Vérifie que la mise à jour est réussie avec un statut 200
+    $this->assertDatabaseMissing('reviews', $data);  // Vérifie que la review mise à jour est bien enregistrée dans la base de données
 });
 
 // Test pour la suppression d'un avis (review)
-it('can delete a review', function () {
+it('can not delete a review', function () {
     $review = Review::factory()->create();  // Crée une review
 
     // Effectue une requête DELETE pour supprimer la review
     $response = $this->deleteJson("/api/reviews/{$review->id}");
 
-    $response->assertStatus(204);  // Vérifie que la suppression est réussie avec un statut 204 (No Content)
-    $this->assertDatabaseMissing('reviews', ['id' => $review->id]);  // Vérifie que la review n'est plus dans la base de données
+    $response->assertStatus(403);  // Vérifie que la suppression est réussie avec un statut 204 (No Content)
+    $this->assertDatabaseHas('reviews', ['id' => $review->id]);  // Vérifie que la review n'est plus dans la base de données
 });
 
 // Tests pour VeterinaryReport
-it('can list veterinary reports', function () {
+it('can not list veterinary reports', function () {
     VeterinaryReport::factory()->count(3)->create();
 
     $response = $this->getJson('/api/veterinary-reports');
 
-    $response->assertStatus(200);
-    $response->assertJsonCount(3);
+    $response->assertStatus(403);
 });
-it('can create a veterinary report with associated user and animal', function () {
+
+
+it('can not create a veterinary report with associated user and animal', function () {
     // Crée un utilisateur, un animal et un rapport vétérinaire
     $user = \App\Models\User::factory()->create()->id;
     $animal = Animal::factory()->create()->id;
@@ -224,13 +226,13 @@ it('can create a veterinary report with associated user and animal', function ()
     ];
     // Création du rapport vétérinaire dans la table veterinary_reports
     $veterinaryReportResponse = $this->postJson('/api/veterinary-reports', $data);
-    $veterinaryReportResponse->assertStatus(201);
+    $veterinaryReportResponse->assertStatus(403);
 
     // Vérification dans la base de données
-    $this->assertDatabaseHas('veterinary_reports', $data);
+    $this->assertDatabaseMissing('veterinary_reports', $data);
 });
 
-it('can update a veterinary report', function () {
+it('can not update a veterinary report', function () {
     $report = VeterinaryReport::factory()->create();
     $user = \App\Models\User::factory()->create()->id;
     $animal = Animal::factory()->create()->id;
@@ -243,15 +245,16 @@ it('can update a veterinary report', function () {
 
     $response = $this->putJson("/api/veterinary-reports/{$report->id}", $data);
 
-    $response->assertStatus(200);
-    $this->assertDatabaseHas('veterinary_reports', $data);
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('veterinary_reports', $data);
 });
 
-it('can delete a veterinary report', function () {
+it('can not delete a veterinary report', function () {
+    
     $report = VeterinaryReport::factory()->create();
 
     $response = $this->deleteJson("/api/veterinary-reports/{$report->id}");
 
-    $response->assertStatus(204);
-    $this->assertDatabaseMissing('veterinary_reports', ['id' => $report->id]);
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('veterinary_reports', ['id' => $report->id]);
 });
