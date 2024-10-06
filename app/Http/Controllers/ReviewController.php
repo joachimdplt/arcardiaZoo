@@ -52,6 +52,10 @@ class ReviewController extends Controller
     public function update(Request $request, $id)
     {
         // Validation des données
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
         $request->validate([
             'username' => 'required|max:50',
             'comment' => 'required',
@@ -65,10 +69,16 @@ class ReviewController extends Controller
     }
 
     // Supprimer un avis spécifique
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
         $review = Review::findOrFail($id);
         $review->delete();
+
 
         return response()->json(null, 204); // Retourner une réponse vide avec un code de statut 204
     }
