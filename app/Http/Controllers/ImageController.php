@@ -4,26 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
 {
-    // Afficher la liste de toutes les images
+    // Afficher la liste de toutes les images (accessible à tout le monde)
     public function index()
     {
         $images = Image::all();
         return response()->json($images);
     }
 
-    // Afficher le formulaire de création (si nécessaire)
-    public function create()
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Enregistrer une nouvelle image
+    // Enregistrer une nouvelle image (accessible uniquement aux administrateurs et employés)
     public function store(Request $request)
     {
-        // Validation des données si nécessaire
+        // Vérification des rôles (seuls les employés et admin peuvent ajouter une image)
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Validation des données
         $request->validate([
             'image_data' => 'required|file',
         ]);
@@ -36,26 +36,27 @@ class ImageController extends Controller
         return response()->json($image, 201); // Retourner l'image créée avec un code de statut 201
     }
 
-    // Afficher une image spécifique
+    // Afficher une image spécifique (accessible à tout le monde)
     public function show($id)
     {
         $image = Image::findOrFail($id);
         return response()->json($image);
     }
 
-    // Afficher le formulaire d'édition d'une image (si nécessaire)
-    public function edit($id)
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Mettre à jour une image spécifique
+    // Mettre à jour une image spécifique (accessible uniquement aux administrateurs et employés)
     public function update(Request $request, $id)
     {
+        // Vérification des rôles (seuls les employés et admin peuvent modifier une image)
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Validation des données
         $request->validate([
             'image_data' => 'required|file',
         ]);
 
+        // Mettre à jour l'image
         $image = Image::findOrFail($id);
         $image->image_data = $request->file('image_data')->store('images');
         $image->save();
@@ -63,9 +64,15 @@ class ImageController extends Controller
         return response()->json($image);
     }
 
-    // Supprimer une image spécifique
-    public function destroy($id)
+    // Supprimer une image spécifique (accessible uniquement aux administrateurs)
+    public function destroy(Request $request, $id)
     {
+        // Vérification des rôles (seuls les administrateurs peuvent supprimer une image)
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        }
+
+        // Supprimer l'image
         $image = Image::findOrFail($id);
         $image->delete();
 
