@@ -17,7 +17,13 @@ class CreateVeterinaryReportsTable extends Migration
             $table->id(); // ID auto-incrémenté
             $table->date('date'); // champ pour la date
             $table->text('details'); // détails du rapport vétérinaire en texte
+            $table->unsignedBigInteger('user_id'); // clé étrangère vers users
+            $table->unsignedBigInteger('animal_id'); // clé étrangère vers animals
             $table->timestamps(); // timestamps Laravel
+
+            // Définir les relations
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('animal_id')->references('id')->on('animals')->onDelete('cascade');
         });
     }
 

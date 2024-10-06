@@ -9,7 +9,7 @@ class VeterinaryReport extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['date', 'details', 'animal_id'];
+    protected $fillable = ['date', 'details', 'animal_id', 'user_id'];
 
     // Un rapport vétérinaire est lié à un animal
     public function animal()
