@@ -18,6 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
     ];
@@ -60,4 +61,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(VeterinaryReport::class);
     }
+
+    public function isAdmin()
+    {
+        // Vérifie si l'utilisateur possède un rôle avec le label "admin"
+        return $this->roles->contains('label', 'admin');
+    }
+
+    public function isEmployee()
+    {
+        // Vérifie si l'utilisateur possède un rôle avec le label "admin"
+        return $this->roles->contains('label', 'employee');
+    }
+    public function isVeterinary()
+    {
+    // Vérifie si l'utilisateur possède un rôle avec le label "admin"
+        return $this->roles->contains('label', 'veterinary');
+    }
+
 }
