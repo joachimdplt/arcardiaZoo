@@ -4,25 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Habitat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HabitatController extends Controller
 {
-    // Afficher la liste de tous les habitats
+    // Afficher la liste de tous les habitats (accessible à tous)
     public function index()
     {
         $habitats = Habitat::all();
         return response()->json($habitats);
     }
 
-    // Afficher le formulaire de création (si nécessaire)
-    public function create()
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Enregistrer un nouvel habitat
+    // Enregistrer un nouvel habitat (admin ou employé uniquement)
     public function store(Request $request)
     {
+        // Vérification du rôle admin ou employé
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         // Validation des données
         $request->validate([
             'name' => 'required|max:50',
@@ -32,25 +32,24 @@ class HabitatController extends Controller
 
         // Créer un nouvel habitat
         $habitat = Habitat::create($request->all());
-        return response()->json($habitat, 201); // Retourner l'habitat créé avec un code de statut 201
+        return response()->json($habitat, 201);
     }
 
-    // Afficher un habitat spécifique
+    // Afficher un habitat spécifique (accessible à tous)
     public function show($id)
     {
         $habitat = Habitat::findOrFail($id);
         return response()->json($habitat);
     }
 
-    // Afficher le formulaire d'édition d'un habitat (si nécessaire)
-    public function edit($id)
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Mettre à jour un habitat spécifique
+    // Mettre à jour un habitat spécifique (admin ou employé uniquement)
     public function update(Request $request, $id)
     {
+        // Vérification du rôle admin ou employé
+        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
         // Validation des données
         $request->validate([
             'name' => 'required|max:50',
@@ -64,12 +63,18 @@ class HabitatController extends Controller
         return response()->json($habitat);
     }
 
-    // Supprimer un habitat spécifique
-    public function destroy($id)
+    // Supprimer un habitat spécifique (admin uniquement)
+    public function destroy(Request $request, $id)
     {
+        // Vérification du rôle admin
+        if (!$request->user() || !$request->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Supprimer l'habitat
         $habitat = Habitat::findOrFail($id);
         $habitat->delete();
 
-        return response()->json(null, 204); // Retourner une réponse vide avec un code de statut 204
+        return response()->json(null, 204);
     }
 }
