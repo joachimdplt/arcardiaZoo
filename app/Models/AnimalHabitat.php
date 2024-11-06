@@ -9,7 +9,7 @@ class AnimalHabitat extends Model
 {
     use HasFactory;
 
-    protected $table = 'animal_habitat';
+    protected $table = 'animal_habitats';
 
     // Pas de timestamps nécessaires dans une table pivot
     public $timestamps = false;
