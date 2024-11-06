@@ -4,82 +4,57 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ReviewController extends Controller
 {
-    // Afficher la liste de tous les avis
+    // Afficher les avis, à la fois approuvés et en attente d'approbation
     public function index()
     {
-        $reviews = Review::all();
-        return response()->json($reviews);
-    }
+        // Récupérer les avis en attente et les avis approuvés
+        $pendingReviews = Review::where('is_visible', false)->get();
+        $approvedReviews = Review::where('is_visible', true)->get();
 
-    // Afficher le formulaire de création (si nécessaire)
-    public function create()
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Enregistrer un nouvel avis
-    public function store(Request $request)
-    {
-        // Validation des données
-        $request->validate([
-            'username' => 'required|max:50',
-            'comment' => 'required',
-            'is_visible' => 'required|boolean',
+        // Retourner la vue avec les avis
+        return Inertia::render('Admin/Reviews', [
+            'pendingReviews' => $pendingReviews,
+            'approvedReviews' => $approvedReviews,
         ]);
-
-        // Créer un nouvel avis
-        $review = Review::create($request->all());
-        return response()->json($review, 201); // Retourner l'avis créé avec un code de statut 201
     }
 
-    // Afficher un avis spécifique
-    public function show($id)
+    // Approuver un avis (uniquement pour les employés)
+    public function approve($id)
     {
-        $review = Review::findOrFail($id);
-        return response()->json($review);
-    }
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
 
-    // Afficher le formulaire d'édition d'un avis (si nécessaire)
-    public function edit($id)
-    {
-        // Vous pouvez retourner une vue si vous utilisez Blade ou un frontend.
-    }
-
-    // Mettre à jour un avis spécifique
-    public function update(Request $request, $id)
-    {
-        // Validation des données
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
-            
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
-        }
-        $request->validate([
-            'username' => 'required|max:50',
-            'comment' => 'required',
-            'is_visible' => 'required|boolean',
-        ]);
-
-        // Mettre à jour l'avis
-        $review = Review::findOrFail($id);
-        $review->update($request->all());
-        return response()->json($review);
-    }
-
-    // Supprimer un avis spécifique
-    public function destroy(Request $request, $id)
-    {
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isEmployee())) {
-            
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        // Vérifier que l'utilisateur a le rôle d'employé
+        if (!in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à approuver cet avis.');
         }
 
+        // Trouver l'avis et le marquer comme approuvé
+        $review = Review::findOrFail($id);
+        $review->update(['is_visible' => true]);
+
+        return redirect()->route('admin.reviews')->with('success', 'Avis approuvé avec succès.');
+    }
+
+    // Supprimer un avis (uniquement pour les employés)
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
+
+        // Vérifier que l'utilisateur a le rôle d'employé
+        if (!in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer cet avis.');
+        }
+
+        // Trouver et supprimer l'avis
         $review = Review::findOrFail($id);
         $review->delete();
 
-
-        return response()->json(null, 204); // Retourner une réponse vide avec un code de statut 204
+        return redirect()->route('admin.reviews')->with('success', 'Avis supprimé avec succès.');
     }
 }
