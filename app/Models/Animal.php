@@ -1,7 +1,4 @@
 <?php
-
-namespace App\Models;
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,23 +8,46 @@ class Animal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'status', 'breed_id', 'image_id'];
+    protected $fillable = ['name', 'status', 'breed_id'];
 
-    // Un animal appartient à une race
+
+
+    // Relation avec les habitats (plusieurs habitats pour un animal)
+    public function habitats()
+    {
+        return $this->belongsToMany(Habitat::class, 'animal_habitats', 'animal_id', 'habitat_id');
+    }
+
+    // Relation avec la race
     public function breed()
     {
         return $this->belongsTo(Breed::class);
     }
 
-    // Un animal peut être dans plusieurs habitats
-    public function habitats()
+    // Relation avec les images (plusieurs images pour un animal)
+    public function images()
     {
-        return $this->belongsToMany(Habitat::class, 'animal_habitat', 'animal_id', 'habitat_id');
+        return $this->belongsToMany(Image::class, 'image_animal', 'animal_id', 'image_id');
     }
 
-    // Un animal peut avoir plusieurs rapports vétérinaires
+    // Animal.php
+
     public function veterinaryReports()
     {
-        return $this->hasMany(VeterinaryReport::class);
+        return $this->hasMany(VeterinaryReport::class, 'animal_id');
     }
+
+
+    // Relation avec les consultations pour chaque animal
+    public function consultations()
+    {
+        return $this->hasMany(ConsultationAnimal::class, 'animal_id', 'id');
+    }
+
+    public function feedings()
+    {
+        return $this->hasMany(AnimalFeeding::class);
+    }
+
 }
+
