@@ -3,87 +3,172 @@
 namespace App\Http\Controllers;
 
 use App\Models\VeterinaryReport;
+use App\Models\User;
+use App\Models\Animal;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class VeterinaryReportController extends Controller
 {
-    // Afficher la liste de tous les rapports vétérinaires (accessible aux admins et vétérinaires)
     public function index(Request $request)
+{
+    $animal_id = $request->get('animal_id');
+    $date = $request->get('date');
+    
+    $query = VeterinaryReport::with(['animal.habitats', 'user']);
+    
+    if ($animal_id) {
+        $query->where('animal_id', $animal_id);
+    }
+    
+    if ($date) {
+        $query->where('date', $date);
+    }
+    
+    $reports = $query->get();
+    $animals = Animal::all();
+    $userRoles = auth()->user()->roles->pluck('label')->toArray(); // Récupérer les rôles de l'utilisateur connecté
+    
+    return Inertia::render('Admin/VeterinaryReports', [
+        'reports' => $reports,
+        'animals' => $animals,
+        'userRoles' => $userRoles, // Passer les rôles à la vue
+    ]);
+}
+
+    public function create()
     {
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isVeterinary())) {
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
+
+        // Interdire l'accès si l'utilisateur est Admin ou Employee
+        if (in_array('Admin', $userRoles) || in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à créer un rapport vétérinaire.');
         }
 
-        $reports = VeterinaryReport::all();
-        return response()->json($reports);
-    }
+        $animals = Animal::all();
+        $veterinarians = User::whereHas('roles', function ($query) {
+            $query->where('label', 'veterinary');
+        })->get();
 
-    // Enregistrer un nouveau rapport vétérinaire (accessible uniquement aux vétérinaires et administrateurs)
+        return Inertia::render('Admin/VeterinaryReportCreate', [
+            'animals' => $animals,
+            'veterinarians' => $veterinarians,
+            'userRoles' => $userRoles,
+            
+        ]);
+    }   
+
     public function store(Request $request)
     {
-        // Vérification des rôles
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isVeterinary())) {
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
-        }
-
-        // Validation des données
         $request->validate([
             'date' => 'required|date',
-            'details' => 'required',
+            'details' => 'required|string',
             'animal_id' => 'required|exists:animals,id',
-            'user_id' => 'required|exists:users,id',
+            'habitat_comment' => 'nullable|string',
+            'feed_type' => 'nullable|string',
+            'feed_quantity' => 'nullable|integer',
         ]);
 
-        // Créer un nouveau rapport vétérinaire
-        $report = VeterinaryReport::create($request->all());
-        return response()->json($report, 201); // Retourner le rapport créé avec un code de statut 201
+        VeterinaryReport::create([
+            'date' => $request->get('date'),
+            'details' => $request->get('details'),
+            'animal_id' => $request->get('animal_id'),
+            'user_id' => $request->user()->id,
+            'habitat_comment' => $request->get('habitat_comment'),
+            'feed_type' => $request->get('feed_type'),
+            'feed_quantity' => $request->get('feed_quantity'),
+        ]);
+
+        return redirect()->route('admin.veterinary-reports.index')->with('success', 'Rapport créé avec succès.');
     }
 
-    // Afficher un rapport vétérinaire spécifique (accessible uniquement aux vétérinaires et administrateurs)
-    public function show(Request $request, $id)
+
+
+    public function edit($id)
     {
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isVeterinary())) {
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
+
+        // Interdire l'accès si l'utilisateur est Admin ou Employee
+        if (in_array('Admin', $userRoles) || in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à modifier ce rapport vétérinaire.');
         }
 
         $report = VeterinaryReport::findOrFail($id);
-        return response()->json($report);
+        $animals = Animal::all();
+        $veterinarians = User::whereHas('roles', function ($query) {
+            $query->where('label', 'veterinary');
+        })->get();
+    
+        return Inertia::render('Admin/VeterinaryReportUpdate', [
+            'report' => $report,
+            'animals' => $animals,
+            'veterinarians' => $veterinarians,
+
+        ]);
     }
 
-    // Mettre à jour un rapport vétérinaire spécifique (accessible uniquement aux vétérinaires et administrateurs)
+    public function show($id)
+    {
+        $report = VeterinaryReport::with('animal', 'user')->findOrFail($id);
+
+        return Inertia::render('Admin/VeterinaryReportShow', [
+            'report' => $report,
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
-        // Vérification des rôles
-        if (!$request->user() || (!$request->user()->isAdmin() && !$request->user()->isVeterinary())) {
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
+
+        // Interdire l'accès si l'utilisateur est Admin ou Employee
+        if (in_array('Admin', $userRoles) || in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à modifier ce rapport vétérinaire.');
         }
 
-        // Validation des données
         $request->validate([
             'date' => 'required|date',
             'details' => 'required',
             'animal_id' => 'required|exists:animals,id',
             'user_id' => 'required|exists:users,id',
+            'feed_type' => 'nullable|string',
+            'feed_quantity' => 'nullable|integer',
         ]);
 
-        // Mettre à jour le rapport
         $report = VeterinaryReport::findOrFail($id);
         $report->update($request->all());
-        return response()->json($report);
+
+        return redirect()->route('admin.veterinary-reports.index')->with('success', 'Rapport mis à jour avec succès.');
     }
 
-    // Supprimer un rapport vétérinaire spécifique (accessible uniquement aux administrateurs)
-    public function destroy(Request $request, $id)
+    public function showReportsByAnimal($animalId)
     {
-        // Vérification des rôles (seuls les administrateurs peuvent supprimer un rapport)
-        if (!$request->user() || !$request->user()->isAdmin()) {
-            return response()->json(['error' => 'Unauthorized'], 403); // Refuser l'accès
+        $animal = Animal::findOrFail($animalId);
+        $reports = VeterinaryReport::with('user')
+            ->where('animal_id', $animalId)
+            ->get();
+
+        return Inertia::render('Admin/VeterinaryReportsByAnimal', [
+            'animal' => $animal,
+            'reports' => $reports,
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        $userRoles = $user->roles->pluck('label')->toArray();
+
+        // Interdire l'accès si l'utilisateur est Admin ou Employee
+        if (in_array('Admin', $userRoles) || in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
         }
 
-        // Supprimer le rapport vétérinaire
         $report = VeterinaryReport::findOrFail($id);
         $report->delete();
 
-        return response()->json(null, 204); // Retourner une réponse vide avec un code de statut 204
+        return redirect()->route('admin.veterinary-reports.index')->with('success', 'Rapport supprimé avec succès.');
     }
 }
