@@ -10,6 +10,12 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\HabitatController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VeterinaryReportController;
+use App\Http\Controllers\UserControllerApi;
+use App\Http\Controllers\AdminController;
+
+use App\Http\Controllers\ClientController;
+
+
 
 
 Route::get('/user', function (Request $request) {
@@ -42,3 +48,8 @@ Route::apiResource('reviews', ReviewController::class);
 // Routes API pour les rapports vétérinaires
 Route::apiResource('veterinary-reports', VeterinaryReportController::class);
 
+Route::apiResource('users', UserControllerApi::class);
+
+Route::post('/contact/submit', 'App\Http\Controllers\ClientController@storeMessage');
+
+Route::post('/api/habitats/{id}/consultation', [HabitatController::class, 'addConsultation']);
