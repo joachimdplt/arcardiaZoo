@@ -63,7 +63,7 @@ const Header = () => {
             onMouseLeave={() => setShowTooltip(false)}
           >
             <a href="/login" target="_blank" className="hover:text-gray-300">
-              Log in
+              LOG IN
             </a>
             {showTooltip && (
               <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-max px-3 py-1 rounded bg-gray-700 text-white text-sm">
