@@ -41,6 +41,7 @@ return [
             'journal_mode' => null,
             'synchronous' => null,
         ],
+        
 
         'mysql' => [
             'driver' => 'mysql',
@@ -61,6 +62,18 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+
+        'mongodb' => [
+        'driver' => 'mongodb',
+        'host' => env('DB_HOST_MONGODB', '127.0.0.1'),
+        'port' => env('DB_PORT_MONGODB', 27017),
+        'database' => env('DB_DATABASE_MONGODB', 'arcadia_zoo_mongo'),
+        'username' => env('DB_USERNAME_MONGODB'),
+        'password' => env('DB_PASSWORD_MONGODB'),
+        'options'  => [
+            'database' => env('DB_DATABASE_MONGODB', 'arcadia_zoo_mongo'), // Nom de la base de données pour l'authentification
+        ],
+    ],
 
         'mariadb' => [
             'driver' => 'mariadb',
@@ -111,6 +124,8 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+
+        
 
     ],
 
