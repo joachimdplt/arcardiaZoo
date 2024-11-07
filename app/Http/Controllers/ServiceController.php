@@ -15,9 +15,9 @@ class ServiceController extends Controller
         $services = Service::with('images')->get();
         return Inertia::render('Admin/Services', [
             'services' => $services,
-        ]);
+        ]); 
     }
-
+ 
     // Créer un nouveau service (formulaire de création)
     public function create()
     {
@@ -31,6 +31,10 @@ class ServiceController extends Controller
     // Enregistrer un nouveau service
     public function store(Request $request)
     {
+        $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à enregistrer ce service.');
+        }
         if (!auth()->user()->isAdmin() && !auth()->user()->isEmployee()) {
             abort(403, 'Vous n\'êtes pas autorisé à créer un service.');
         }
