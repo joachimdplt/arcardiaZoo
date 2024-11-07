@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\VeterinaryReport;
 use App\Models\User;
 use App\Models\Animal;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VeterinaryReportFactory extends Factory
