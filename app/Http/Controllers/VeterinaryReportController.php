@@ -12,6 +12,10 @@ class VeterinaryReportController extends Controller
 {
     public function index(Request $request)
 {
+    $user = auth()->user();
+    if ($user===null) {
+        abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
+    }
     $animal_id = $request->get('animal_id');
     $date = $request->get('date');
     
@@ -24,6 +28,7 @@ class VeterinaryReportController extends Controller
     if ($date) {
         $query->where('date', $date);
     }
+    
     
     $reports = $query->get();
     $animals = Animal::all();
@@ -39,6 +44,10 @@ class VeterinaryReportController extends Controller
     public function create()
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
+        }
+
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Interdire l'accès si l'utilisateur est Admin ou Employee
@@ -48,7 +57,7 @@ class VeterinaryReportController extends Controller
 
         $animals = Animal::all();
         $veterinarians = User::whereHas('roles', function ($query) {
-            $query->where('label', 'veterinary');
+            $query->where('label', 'Veterinary');
         })->get();
 
         return Inertia::render('Admin/VeterinaryReportCreate', [
@@ -61,6 +70,16 @@ class VeterinaryReportController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->user()===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
+        }
+        $userRoles = $request->user()->roles->pluck('label')->toArray();
+
+        if (in_array('Admin', $userRoles) || in_array('Employee', $userRoles)) {
+            abort(403, 'Vous n\'êtes pas autorisé à créer un rapport vétérinaire.');
+        }
+
+
         $request->validate([
             'date' => 'required|date',
             'details' => 'required|string',
@@ -69,6 +88,7 @@ class VeterinaryReportController extends Controller
             'feed_type' => 'nullable|string',
             'feed_quantity' => 'nullable|integer',
         ]);
+
 
         VeterinaryReport::create([
             'date' => $request->get('date'),
@@ -88,6 +108,9 @@ class VeterinaryReportController extends Controller
     public function edit($id)
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
+        }
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Interdire l'accès si l'utilisateur est Admin ou Employee
@@ -98,7 +121,7 @@ class VeterinaryReportController extends Controller
         $report = VeterinaryReport::findOrFail($id);
         $animals = Animal::all();
         $veterinarians = User::whereHas('roles', function ($query) {
-            $query->where('label', 'veterinary');
+            $query->where('label', 'Veterinary');
         })->get();
     
         return Inertia::render('Admin/VeterinaryReportUpdate', [
@@ -121,6 +144,9 @@ class VeterinaryReportController extends Controller
     public function update(Request $request, $id)
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
+        }
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Interdire l'accès si l'utilisateur est Admin ou Employee
@@ -159,6 +185,9 @@ class VeterinaryReportController extends Controller
     public function destroy($id)
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer ce rapport vétérinaire.');
+        }
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Interdire l'accès si l'utilisateur est Admin ou Employee
