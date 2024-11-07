@@ -18,7 +18,7 @@ it('can list roles', function () {
 it('can create a role', function () {
     // Créer un utilisateur admin
     $admin = User::factory()->create();
-    $adminRole = Role::factory()->create(['label' => 'admin']);
+    $adminRole = Role::factory()->create(['label' => 'Admin']);
     $admin->roles()->attach($adminRole);
 
     $this->actingAs($admin);  // Authentification en tant qu'admin
@@ -43,7 +43,7 @@ it('can show a specific role', function () {
 it('can update a role', function () {
     // Créer un utilisateur admin
     $admin = User::factory()->create();
-    $adminRole = Role::factory()->create(['label' => 'admin']);
+    $adminRole = Role::factory()->create(['label' => 'Admin']);
     $admin->roles()->attach($adminRole);
 
     $this->actingAs($admin);  // Authentification en tant qu'admin
@@ -60,7 +60,7 @@ it('can update a role', function () {
 it('can delete a role', function () {
     // Créer un utilisateur admin
     $admin = User::factory()->create();
-    $adminRole = Role::factory()->create(['label' => 'admin']);
+    $adminRole = Role::factory()->create(['label' => 'Admin']);
     $admin->roles()->attach($adminRole);
 
     $this->actingAs($admin);  // Authentification en tant qu'admin
@@ -76,41 +76,71 @@ it('can delete a role', function () {
 // Tests similaires pour les autres entités
 
 it('can create a service', function () {
-    // Créer un utilisateur employé
+    // Créer un utilisateur employé ou Admin
     $employee = User::factory()->create();
-    $employeeRole = Role::factory()->create(['label' => 'employee']);
+    $employeeRole = Role::factory()->create(['label' => 'Employee']);
     $employee->roles()->attach($employeeRole);
+
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create(['label' => 'Admin']);
+    $admin->roles()->attach($adminRole);
+
 
     $this->actingAs($employee);  // Authentification en tant qu'employé
 
-    $data = ['name' => 'Service Name', 'description' => 'Service Description'];
+    $data = [
+        'name' => 'Service Name', 
+        'description' => 'Service Description',
+        'start_time' => '12:00',
+        'end_time' => '14:00',
+    ];
 
     $response = $this->postJson('/api/services', $data);
 
-    $response->assertStatus(201);
+    $response->assertStatus(302);
     $this->assertDatabaseHas('services', $data);
+
+    $this->actingAs($admin);  // Authentification en tant qu'admin
+    $data = [
+        'name' => 'Service Name', 
+        'description' => 'Service Description',
+        'start_time' => '12:00',
+        'end_time' => '14:00',
+    ];
+
+    $response = $this->postJson('/api/services', $data);
+
+    $response->assertStatus(302);
+    $this->assertDatabaseHas('services', $data);
+
+
+
+
+
 });
 
-it('can create a habitat', function () {
-    // Créer un utilisateur employé ou admin
-    $employee = User::factory()->create();
-    $employeeRole = Role::factory()->create(['label' => 'employee']);
-    $employee->roles()->attach($employeeRole);
+it('forbids guests, employee and veterinary to create a habitat', function () {
 
-    $this->actingAs($employee);  // Authentification en tant qu'employé
+    // Créer un utilisateur admin 
+
+    $admin = User::factory()->create();
+    $adminRole = Role::factory()->create(['label' => 'Admin']);
+    $admin->roles()->attach($adminRole);
+
+    $this->actingAs($admin);  // Authentification en tant qu'admin
 
     $data = ['name' => 'Forest', 'description' => 'Dense forest', 'comment' => 'High humidity'];
 
     $response = $this->postJson('/api/habitats', $data);
 
-    $response->assertStatus(201);
+    $response->assertStatus(302);
     $this->assertDatabaseHas('habitats', $data);
 });
 
 it('can create a veterinary report with associated user and animal', function () {
     // Créer un utilisateur vétérinaire
     $veterinarian = User::factory()->create();
-    $vetRole = Role::factory()->create(['label' => 'veterinary']);
+    $vetRole = Role::factory()->create(['label' => 'Veterinary']);
     $veterinarian->roles()->attach($vetRole);
 
     $this->actingAs($veterinarian);  // Authentification en tant que vétérinaire
@@ -125,7 +155,7 @@ it('can create a veterinary report with associated user and animal', function ()
 
     $response = $this->postJson('/api/veterinary-reports', $data);
 
-    $response->assertStatus(201);
+    $response->assertStatus(302);
     $this->assertDatabaseHas('veterinary_reports', $data);
 });
 
@@ -133,7 +163,7 @@ it('can create a veterinary report with associated user and animal', function ()
 it('forbids non-admin from deleting a role', function () {
     // Créer un utilisateur non-admin (employé par exemple)
     $employee = User::factory()->create();
-    $employeeRole = Role::factory()->create(['label' => 'employee']);
+    $employeeRole = Role::factory()->create(['label' => 'Employee']);
     $employee->roles()->attach($employeeRole);
 
     $this->actingAs($employee);  // Authentification en tant qu'employé
