@@ -22,9 +22,6 @@ class AnimalFactory extends Factory
             'name'=> $this->faker->word,
             'status'=> $this->faker->word,
             'breed_id'=> Breed::factory()->create()->id,
-            'image_id'=> Image::factory()->create()->id,
-
-            
         ];
     }
 }
