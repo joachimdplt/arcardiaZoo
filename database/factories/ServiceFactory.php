@@ -17,8 +17,10 @@ class ServiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'description' => fake()->text(),
+            'name' => $this->faker->company,
+            'description' => $this->faker->sentence,
+            'start_time' => $this->faker->time(), // Définit une heure de début aléatoire
+            'end_time' => $this->faker->time(), // Si end_time est également requis
         ];
     }
 }
