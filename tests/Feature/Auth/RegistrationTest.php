@@ -1,20 +1,21 @@
 <?php
 
-test('registration screen can be rendered', function () {
+test('registration screen cannot be rendered', function () {
     $response = $this->get('/register');
 
-    $response->assertStatus(200);
+    $response->assertStatus(404); // Ou utilisez 302 si vous redirigez
 });
 
-test('new users can register', function () {
-    $response = $this->post('/register', [
-        'name' => 'Test User',
-        'last_name' => 'Test User',
-        'email' => 'test@example.com',
+it('forbids new users from registering', function () {
+    $data = [
+        'name' => 'John Doe',
+        'email' => 'johndoe@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
-    ]);
+    ];
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response = $this->post('/register', $data);
+
+    $response->assertStatus(404); // Ou utilisez 302 si vous redirigez
+    $this->assertGuest(); // Vérifie que personne n'est authentifié
 });
