@@ -91,6 +91,9 @@ class HabitatController extends Controller
     {
         // Récupérer les rôles de l'utilisateur connecté
         $userRoles = auth()->user()->roles->pluck('label')->toArray();
+        if ($userRoles===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à voir cet habitat.');
+        }
     
         // Récupérer les habitats avec leurs animaux et images
         $habitats = Habitat::with('animals', 'images')->get();
@@ -114,6 +117,9 @@ class HabitatController extends Controller
     {
         // Vérifier que l'utilisateur est un administrateur
         $userRoles = auth()->user()->roles->pluck('label')->toArray();
+        if ($userRoles===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à creer cet habitat.');
+        }
     
         if (!in_array('Admin', $userRoles)) {
             abort(403, 'Vous n\'êtes pas autorisé à créer un habitat.');
@@ -177,6 +183,9 @@ public function update(Request $request, $id)
 public function store(Request $request)
 {
     $userRoles = auth()->user()->roles->pluck('label')->toArray();
+    if ($userRoles===null) {
+        abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
+    }
 
     if (!in_array('Admin', $userRoles)) {
         abort(403, 'Vous n\'êtes pas autorisé à créer un habitat.');
