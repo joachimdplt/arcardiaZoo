@@ -44,6 +44,7 @@ Route::apiResource('habitats', HabitatController::class);
 
 // Routes API pour les avis (reviews)
 Route::apiResource('reviews', ReviewController::class);
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
 // Routes API pour les rapports vétérinaires
 Route::apiResource('veterinary-reports', VeterinaryReportController::class);
@@ -51,5 +52,3 @@ Route::apiResource('veterinary-reports', VeterinaryReportController::class);
 Route::apiResource('users', UserControllerApi::class);
 
 Route::post('/contact/submit', 'App\Http\Controllers\ClientController@storeMessage');
-
-Route::post('/api/habitats/{id}/consultation', [HabitatController::class, 'addConsultation']);
