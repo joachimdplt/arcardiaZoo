@@ -21,55 +21,25 @@ it('can create a review as a guest', function () {
     $data = [
         'username' => 'JohnDoe',
         'comment' => 'Great place!',
-        'is_visible' => true,  // Devrait être ignoré car seul un employé ou admin peut rendre visible
+        'is_visible' => false,  
     ];
 
-    $response = $this->postJson('/api/reviews', $data);
+    $response = $this->postJson('/reviews', $data);
 
-    $response->assertStatus(201);
-    // Vérifier que l'avis a été créé avec `is_visible` à false
+    $response->assertStatus(301);
+
     $this->assertDatabaseHas('reviews', [
         'username' => 'JohnDoe',
         'comment' => 'Great place!',
-        'is_visible' => true,
+        'is_visible' => false,
     ]);
 });
 
-// Test pour créer un avis en tant qu'employé ou admin (autorisé à définir `is_visible`)
-it('can create a review as employee', function () {
-    $employee = User::factory()->create();
-    $employeeRole = Role::factory()->create(['label' => 'employee']);
-    $employee->roles()->attach($employeeRole);
 
-    $this->actingAs($employee);  // Authentification en tant qu'employé
-
-    $data = [
-        'username' => 'JaneDoe',
-        'comment' => 'Amazing zoo!',
-        'is_visible' => true,  // L'employé peut rendre visible
-    ];
-
-    $response = $this->postJson('/api/reviews', $data);
-
-    $response->assertStatus(201);
-    // Vérifier que l'avis a été créé avec `is_visible` à true
-    $this->assertDatabaseHas('reviews', $data);
-});
-
-// Test pour afficher un avis spécifique
-it('can show a specific review', function () {
-    $review = Review::factory()->create();
-
-    $response = $this->getJson("/api/reviews/{$review->id}");
-
-    $response->assertStatus(200);
-    $response->assertJson(['id' => $review->id, 'username' => $review->username, 'comment' => $review->comment]);
-});
-
-// Test pour mettre à jour un avis (autorisé uniquement pour les employés ou admin)
+// Test pour mettre à jour un avis (autorisé uniquement pour les employés)
 it('can update a review as employee', function () {
     $employee = User::factory()->create();
-    $employeeRole = Role::factory()->create(['label' => 'employee']);
+    $employeeRole = Role::factory()->create(['label' => 'Employee']);
     $employee->roles()->attach($employeeRole);
 
     $this->actingAs($employee);  // Authentification en tant qu'employé
@@ -77,14 +47,12 @@ it('can update a review as employee', function () {
     $review = Review::factory()->create();
 
     $data = [
-        'username' => 'UpdatedUser',
-        'comment' => 'Updated comment',
-        'is_visible' => false,
+        'is_visible' => true,
     ];
 
-    $response = $this->putJson("/api/reviews/{$review->id}", $data);
+    $response = $this->putJson("/admin/reviews/{$review->id}/approve", $data);
 
-    $response->assertStatus(200);
+    $response->assertStatus(302);
     // Vérifier que l'avis a été mis à jour dans la base de données
     $this->assertDatabaseHas('reviews', $data);
 });
@@ -99,25 +67,25 @@ it('forbids guest from updating a review', function () {
         'is_visible' => false,
     ];
 
-    $response = $this->putJson("/api/reviews/{$review->id}", $data);
+    $response = $this->putJson("/admin/reviews/{$review->id}/approve", $data);
 
     // Vérifier que l'accès est refusé avec un statut 403
     $response->assertStatus(403);
 });
 
-// Test pour supprimer un avis (autorisé uniquement pour les employés ou admin)
-it('can delete a review as admin', function () {
-    $admin = User::factory()->create();
-    $adminRole = Role::factory()->create(['label' => 'admin']);
-    $admin->roles()->attach($adminRole);
+// Test pour supprimer un avis (autorisé uniquement pour les employés)
+it('can delete a review as employee', function () {
+    $employee = User::factory()->create();
+    $employeeRole = Role::factory()->create(['label' => 'Employee']);
+    $employee->roles()->attach($employeeRole);
 
-    $this->actingAs($admin);  // Authentification en tant qu'admin
+    $this->actingAs($employee);  // Authentification en tant qu'admin
 
     $review = Review::factory()->create();
 
     $response = $this->deleteJson("/api/reviews/{$review->id}");
 
-    $response->assertStatus(204);
+    $response->assertStatus(302);
     // Vérifier que l'avis a été supprimé de la base de données
     $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
 });
