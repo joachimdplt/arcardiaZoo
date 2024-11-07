@@ -219,6 +219,9 @@ public function store(Request $request)
 public function destroy($id)
 {
     $userRoles = auth()->user()->roles->pluck('label')->toArray();
+    if ($userRoles===null) {
+        abort(403, 'Vous n\'êtes pas autorisé à voir cet habitat.');
+    }
 
     if (!in_array('Admin', $userRoles)) {
         abort(403, 'Vous n\'êtes pas autorisé à supprimer cet habitat.');
