@@ -26,6 +26,9 @@ class ReviewController extends Controller
     public function approve($id)
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
+        }
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Vérifier que l'utilisateur a le rôle d'employé
@@ -44,6 +47,9 @@ class ReviewController extends Controller
     public function destroy($id)
     {
         $user = auth()->user();
+        if ($user===null) {
+            abort(403, 'Vous n\'êtes pas autorisé à supprimer cet avis');
+        }
         $userRoles = $user->roles->pluck('label')->toArray();
 
         // Vérifier que l'utilisateur a le rôle d'employé
