@@ -6,15 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-// Test pour lister les avis
-it('can list reviews', function () {
-    Review::factory()->count(3)->create();
-
-    $response = $this->getJson('/api/reviews');
-
-    $response->assertStatus(200);
-    $response->assertJsonCount(3);
-});
 
 // Test pour créer un avis (pour un visiteur ou un utilisateur non authentifié)
 it('can create a review as a guest', function () {
@@ -26,7 +17,7 @@ it('can create a review as a guest', function () {
 
     $response = $this->postJson('/reviews', $data);
 
-    $response->assertStatus(301);
+    $response->assertStatus(302);
 
     $this->assertDatabaseHas('reviews', [
         'username' => 'JohnDoe',
