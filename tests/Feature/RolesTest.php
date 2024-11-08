@@ -133,6 +133,13 @@ it('forbids non-admin from creating a role', function () {
     $this->assertDatabaseMissing('roles', $data);
 });
 
+it('forbids guest from accessing protected routes', function () {
+    $response = $this->get('/dashboard'); 
+
+    // Vérifie que l'utilisateur est redirigé vers la page de connexion
+    $response->assertRedirect('/login');
+});
+
 
 it('forbids guests, employee and veterinary to create a habitat', function () {
 
