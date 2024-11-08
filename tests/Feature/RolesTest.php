@@ -134,7 +134,16 @@ it('forbids non-admin from creating a role', function () {
 });
 
 it('forbids guest from accessing protected routes', function () {
-    $response = $this->get('/dashboard'); 
+    $response = $this->get('/dashboard');
+    $response = $this->get('/admin/animals');
+    $response = $this->get('/admin/users');
+    $response = $this->get('/admin/habitats');
+    $response = $this->get('/admin/services');
+    $response = $this->get('/admin/veterinary-reports');
+    $response = $this->get('/admin/breeds');
+    $response = $this->get('/admin/reviews');
+    $response = $this->get('/admin/contacts');
+    $response = $this->get('/admin/stats');
 
     // Vérifie que l'utilisateur est redirigé vers la page de connexion
     $response->assertRedirect('/login');
