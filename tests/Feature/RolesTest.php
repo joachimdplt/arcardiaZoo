@@ -113,11 +113,26 @@ it('can create a service', function () {
     $response->assertStatus(302);
     $this->assertDatabaseHas('services', $data);
 
-
-
-
-
 });
+
+it('forbids non-admin from creating a role', function () {
+    // Créer un utilisateur non-admin (par exemple, un employé)
+    $employee = User::factory()->create();
+    $employeeRole = Role::factory()->create(['label' => 'Employee']);
+    $employee->roles()->attach($employeeRole);
+
+    // Authentification en tant qu'employé
+    $this->actingAs($employee);
+
+    $data = ['label' => 'Manager'];
+
+    $response = $this->postJson('/api/roles', $data);
+
+    // Vérifier que l'employé ne peut pas créer un rôle
+    $response->assertStatus(403);
+    $this->assertDatabaseMissing('roles', $data);
+});
+
 
 it('forbids guests, employee and veterinary to create a habitat', function () {
 
