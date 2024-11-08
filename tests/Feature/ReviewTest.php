@@ -61,7 +61,7 @@ it('forbids guest from updating a review', function () {
     $response = $this->putJson("/admin/reviews/{$review->id}/approve", $data);
 
     // Vérifier que l'accès est refusé avec un statut 403
-    $response->assertStatus(403);
+    $response->assertStatus(401);
 });
 
 // Test pour supprimer un avis (autorisé uniquement pour les employés)
