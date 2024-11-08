@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth'])->group(function () {
+
 // Gestion des utilisateurs (Admin)
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 Route::get('/admin/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
@@ -68,6 +70,7 @@ Route::delete('/admin/animals/{id}', [AnimalController::class, 'destroy'])->name
 Route::delete('/admin/animals/{animal}/images/{image}', [AnimalController::class, 'deleteImage']);
 
 // Gestion des services
+
 Route::get('/admin/services', [ServiceController::class, 'index'])->name('admin.services');
 Route::get('/admin/services/create', [ServiceController::class, 'create'])->name('admin.services.create');
 Route::post('/admin/services', [ServiceController::class, 'store'])->name('admin.services.store');
@@ -104,6 +107,22 @@ Route::put('/admin/reviews/{id}', [ReviewController::class, 'update'])->name('ad
 Route::delete('/admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
 Route::put('/admin/reviews/{id}/approve', [ReviewController::class, 'approve'])->name('admin.reviews.approve');
 
+// Gestion des messages de contact (Admin)
+Route::get('/admin/contacts', [AdminController::class, 'contactMessages'])->name('admin.contacts');
+Route::get('/admin/contacts', [AdminController::class, 'showContacts'])->name('admin.contacts');
+
+// Statistiques pour habitats et animaux
+Route::get('/admin/habitat-stats', [HabitatController::class, 'showHabitatStats'])->name('admin.habitatStats');
+Route::get('/admin/stats', [HabitatController::class, 'showCombinedStats'])->name('admin.stats');
+Route::get('/admin/animal-stats', [AnimalController::class, 'showAnimalStats'])->name('admin.animalStats');
+
+// Gestion des alimentations des animaux
+Route::post('/admin/animals/{animal}/feedings', [AnimalFeedingController::class, 'store'])->name('animals.feedings.store');
+Route::get('/admin/animals/{animalId}/feedings', [AnimalFeedingController::class, 'showFeedings'])->name('animal.feedings');
+
+
+});
+
 // Pages clients
 Route::get('/client', [ClientController::class, 'index'])->name('client.home');
 Route::get('/client/services', [ClientController::class, 'services'])->name('client.services');
@@ -115,24 +134,15 @@ Route::post('/reviews', [ClientController::class, 'storeReview'])->name('reviews
 Route::post('/contact/submit', [ClientController::class, 'storeMessage']);
 Route::get('/contact', [ClientController::class, 'contact'])->name('client.contact');
 
-// Gestion des messages de contact (Admin)
-Route::get('/admin/contacts', [AdminController::class, 'contactMessages'])->name('admin.contacts');
-Route::get('/admin/contacts', [AdminController::class, 'showContacts'])->name('admin.contacts');
 
 // Enregistrement des clics (statistiques)
 Route::post('/habitat/{id}/click', [HabitatController::class, 'recordClick'])->name('habitat.recordClick');
 Route::post('/animals/{id}/click', [AnimalController::class, 'recordAnimalClick'])->name('animal.recordClick');
 
-// Statistiques pour habitats et animaux
-Route::get('/admin/habitat-stats', [HabitatController::class, 'showHabitatStats'])->name('admin.habitatStats');
-Route::get('/admin/stats', [HabitatController::class, 'showCombinedStats'])->name('admin.stats');
-Route::get('/admin/animal-stats', [AnimalController::class, 'showAnimalStats'])->name('admin.animalStats');
-
-// Gestion des alimentations des animaux
-Route::post('/admin/animals/{animal}/feedings', [AnimalFeedingController::class, 'store'])->name('animals.feedings.store');
-Route::get('/admin/animals/{animalId}/feedings', [AnimalFeedingController::class, 'showFeedings'])->name('animal.feedings');
 
 // Documentation
 Route::get('/admin/documentation', [DocumentationController::class, 'show'])->name('admin.documentation');
+
+
 
 require __DIR__.'/auth.php';
