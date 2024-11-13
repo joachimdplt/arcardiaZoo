@@ -6,6 +6,7 @@ import HabitatsClient from './HabitatsClient';
 import ReviewsClient from './ReviewsClient';
 import ContactsClient from './ContactsClient';
 import Accueil from './components/Accueil';
+import CookieBanner from './CookieBanner';
 
 const Home = () => {
     // Récupérer les services et habitats via Inertia
@@ -22,6 +23,7 @@ const Home = () => {
                 <HabitatsClient habitats={habitats} /> 
                 <ReviewsClient />
                 <ContactsClient />
+                <CookieBanner/>
             </main>
         </div>
     );
