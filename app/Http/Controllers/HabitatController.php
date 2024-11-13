@@ -113,7 +113,7 @@ class HabitatController extends Controller
             'habitat' => $habitat,
         ]);
     }
-    public function create()
+    public function create(Request $request)
     {
         // Vérifier que l'utilisateur est un administrateur
         $userRoles = auth()->user()->roles->pluck('label')->toArray();
@@ -124,6 +124,14 @@ class HabitatController extends Controller
         if (!in_array('Admin', $userRoles)) {
             abort(403, 'Vous n\'êtes pas autorisé à créer un habitat.');
         }
+        $request->validate([
+            'name' => 'nullable|max:255',
+            'description' => 'nullable',
+            'location' => 'nullable',
+            'comment' => 'nullable',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
     
         // Si l'utilisateur est administrateur, afficher la vue de création
         return Inertia::render('Admin/HabitatCreate');
