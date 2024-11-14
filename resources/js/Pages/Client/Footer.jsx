@@ -11,7 +11,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="text-center py-12 bg-green-800 text-white">
+    <footer className="text-center py-12 bg-[#38401A] text-white">
       <a
         href="#accueil"  // Ce lien cible la section d'accueil
         onClick={(e) => handleNavClick(e, "accueil")}
@@ -42,20 +42,6 @@ const Footer = () => {
           className="text-gray-300 hover:text-white"
         >
           HABITATS
-        </a>
-        <a
-          href="#reviewsClient"
-          onClick={(e) => handleNavClick(e, "reviewsClient")}
-          className="text-gray-300 hover:text-white"
-        >
-          AVIS
-        </a>
-        <a
-          href="#contactsClient"
-          onClick={(e) => handleNavClick(e, "contactsClient")}
-          className="text-gray-300 hover:text-white"
-        >
-          CONTACT
         </a>
         <a
           href="/login"
