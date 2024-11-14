@@ -46,14 +46,14 @@ const ReviewsClient = ({ isHovered }) => {
       <h2
         onClick={() => setIsExpanded(!isExpanded)}
         className="text-5xl font-bold cursor-pointer text-white transition-transform duration-300"
-      >
+        >
         Laisser votre avis
       </h2>
 
       <p className="mt-4 mb-10 text-white text-lg">
         Partagez votre expérience avec nous.
       </p>
-
+x
       <div
         ref={formRef}
         className={`transition-all duration-500 ease-in-out w-full ${
