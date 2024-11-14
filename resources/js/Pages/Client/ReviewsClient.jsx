@@ -45,7 +45,7 @@ const ReviewsClient = ({ isHovered }) => {
     >
       <h2
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-5xl mt-6 font-bold cursor-pointer text-white transition-transform duration-300"
+        className="text-5xl font-bold cursor-pointer text-white transition-transform duration-300"
       >
         Laisser votre avis
       </h2>
@@ -65,11 +65,11 @@ const ReviewsClient = ({ isHovered }) => {
             {!sent ? (
               <form className="p-12 bg-gray-100 shadow-lg rounded-lg" onSubmit={handleSubmit}>
                 <div className="mb-8">
-                  <label className="block text-gray-800 text-2xl font-bold mb-4" htmlFor="name">
+                  <label className="block text-gray-700 text-2xl font-bold mb-4" htmlFor="name">
                     Pseudo
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-4 px-5 text-gray-700 text-lg leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-4 px-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="name"
                     type="text"
                     value={data.username}
@@ -80,11 +80,11 @@ const ReviewsClient = ({ isHovered }) => {
                   {errors.username && <p className="text-red-500 mt-1">{errors.username}</p>}
                 </div>
                 <div className="mb-12">
-                  <label className="block text-gray-800 text-2xl font-bold mb-4" htmlFor="comment">
+                  <label className="block text-gray-700 text-2xl font-bold mb-4" htmlFor="comment">
                     Commentaire
                   </label>
                   <textarea
-                    className="shadow appearance-none border rounded w-full py-4 px-5 text-gray-700 text-lg leading-tight focus:outline-none focus:shadow-outline h-60"
+                    className="shadow appearance-none border rounded w-full py-4 px-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-60"
                     id="comment"
                     value={data.comment}
                     onChange={(e) => setData('comment', e.target.value)}
