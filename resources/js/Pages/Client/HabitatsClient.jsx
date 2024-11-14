@@ -1,45 +1,78 @@
 import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 
-const HabitatsClient = () => {
-  // Récupérer les habitats via Inertia
+const HabitatsClient = ({ isHovered }) => {
   const { habitats } = usePage().props;
-
-  // État pour suivre le statut du clic
   const [clickStatus, setClickStatus] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false); // Controls content visibility
+  const [isLocked, setIsLocked] = useState(false); // Controls locked state for background color
 
-  // Fonction pour gérer le clic de consultation
   const handleConsultationClick = async (habitatId) => {
     setClickStatus('loading');
     try {
-        router.post(`/habitat/${habitatId}/click`, {}, {
-            onSuccess: () => {
-                setClickStatus('success');
-                console.log(`Consultation enregistrée pour l'habitat ID: ${habitatId}`);
-                router.visit(`/habitats/${habitatId}`);
-            },
-            onError: () => {
-                setClickStatus('error');
-                console.error("Erreur lors de l'enregistrement de la consultation");
-            }
-        });
+      router.post(`/habitat/${habitatId}/click`, {}, {
+        onSuccess: () => {
+          setClickStatus('success');
+          router.visit(`/habitats/${habitatId}`);
+        },
+        onError: () => {
+          setClickStatus('error');
+        }
+      });
     } catch (error) {
-        setClickStatus('error');
-        console.error("Erreur lors de l'enregistrement de la consultation", error);
+      setClickStatus('error');
     }
-};
+  };
+
+  const handleMouseEnter = () => {
+    setIsLocked(true); // Locks the background color
+    setIsExpanded(true); // Shows content on hover
+  };
+
+  const handleMouseLeave = () => {
+    setIsExpanded(false); // Hides content when leaving
+    setIsLocked(false); // Resets lock, allowing background to turn white
+  };
 
   return (
-    <div id="habitatsClient" className="min-h-screen flex flex-col items-center justify-center bg-white">
-      <h1 className="text-4xl font-bold">Visitez les habitats</h1>
-      <p className="mt-4">Des espaces de vie imaginés pour accompagner les animaux au retour à la vie sauvage.</p>
+    <div 
+      id="habitatsClient" 
+      className={`flex flex-col items-center justify-center w-full h-full transition-colors duration-500 ${
+        isHovered || isLocked ? 'bg-custom-color' : 'bg-white'
+      }`}
+      onMouseEnter={handleMouseEnter} // Activates color and displays content on hover
+      onMouseLeave={handleMouseLeave} // Hides content and resets lock on exit
+      onClick={() => setIsExpanded(!isExpanded)} // Toggles content visibility on click
+      style={{ backgroundColor: isHovered || isLocked ? '#A6A26A' : 'white' }}
+    >
+      <h1 
+        className={`text-7xl font-bold mt-10 cursor-pointer transition-colors duration-300 ${
+          isHovered || isLocked ? 'text-white' : 'text-black'
+        }`}
+      >
+        Visitez les habitats 
+      </h1>
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold">Habitats</h2>
+      <p 
+        className={`mt-4 transition-colors duration-300 ${
+          isHovered || isLocked ? 'text-white' : 'text-black'
+        }`}
+      >
+        Des espaces de vie imaginés pour accompagner les animaux au retour à la vie sauvage.
+      </p>
+
+      {/* Details section with transition */}
+      <div className={`mt-4 transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+        <h2 className={`text-2xl font-semibold transition-colors duration-300 ${
+          isHovered || isLocked ? 'text-white' : 'text-black'
+        }`}>
+          Habitats
+        </h2>
+        
         {Array.isArray(habitats) && habitats.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             {habitats.map((habitat) => (
-              <div key={habitat.id} className="border p-4 rounded-lg shadow-lg">
+              <div key={habitat.id} className="border p-4 rounded-lg shadow-lg bg-white">
                 {habitat.images.length > 0 && (
                   <ImageCarousel images={habitat.images} />
                 )}
@@ -68,11 +101,12 @@ const HabitatsClient = () => {
                   </div>
                 )}
 
+                {/* Updated button with green color as default */}
                 <Link
                   href={`/habitats/${habitat.id}`}
-                  className="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+                  className="mt-4 inline-block bg-[#38401A] text-white py-2 px-4 rounded hover:bg-green-700"
                   onClick={(e) => {
-                    e.preventDefault(); // Empêcher la navigation immédiate
+                    e.preventDefault();
                     handleConsultationClick(habitat.id);
                   }}
                 >
