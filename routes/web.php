@@ -16,6 +16,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AnimalFeedingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentationController;
+use App\Http\Controllers\PageController;
+
 
 // Page d'accueil
 Route::get('/', function () {
@@ -142,6 +144,10 @@ Route::post('/animals/{id}/click', [AnimalController::class, 'recordAnimalClick'
 
 // Documentation
 Route::get('/admin/documentation', [DocumentationController::class, 'show'])->name('admin.documentation');
+
+
+// Route pour les mentions légales
+Route::get('/mentions-legales', [PageController::class, 'showLegalMentions'])->name('legal.mentions');
 
 
 
