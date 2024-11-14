@@ -137,12 +137,10 @@ public function show($animalId)
   
       $userRoles = $user->roles->pluck('label')->toArray();
   
-      // Vérifier si l'utilisateur est un administrateur
       if (!in_array('Admin', $userRoles)) {
           abort(403, 'Seuls les administrateurs peuvent créer un animal.');
       }
   
-      // Valider les champs d'entrée
       $request->validate([
           'name' => 'required|string|max:255',
           'status' => 'required|string',
@@ -153,80 +151,62 @@ public function show($animalId)
           'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
       ]);
   
-      // Créer l'animal avec les données basiques
       $animal = Animal::create($request->only('name', 'status', 'breed_id'));
-  
-      // Attacher l'habitat sélectionné à l'animal via la table pivot
       $animal->habitats()->attach($request->input('habitat_id'));
   
-      // Gestion des images si elles sont fournies
       if ($request->hasFile('images')) {
           foreach ($request->file('images') as $image) {
-              // Stocker l'image dans le dossier 'public/animal_images'
               $imagePath = $image->store('animal_images', 'public');
-  
-              // Créer une instance du modèle Image pour l'enregistrement
               $imageModel = Image::create([
                   'image_data' => $imagePath,
                   'name' => $image->getClientOriginalName(),
               ]);
-  
-              // Attacher l'image à l'animal dans la table pivot
               $animal->images()->attach($imageModel->id);
           }
       }
   
-      return response()->json(['message' => 'Animal créé avec succès'], 201);
+      return redirect()->route('admin.animals')->with('success', 'Animal créé avec succès');
   }
 
   public function update(Request $request, $id)
-    {
-        // Vérifier si l'utilisateur est authentifié
-        if (!auth()->check()) {
-            abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
-        }
-
-        // Récupérer les rôles de l'utilisateur
-        $userRoles = auth()->user()->roles->pluck('label')->toArray();
-
-        // Vérifier si l'utilisateur est ni Admin ni Employee
-        if (!in_array('Admin', $userRoles) && !in_array('Employee', $userRoles)) {
-            abort(403, 'Vous n\'êtes pas autorisé à créer un animal.');
-        }
-
-        // Validation des données de la requête
-        $request->validate([
-            'name' => 'nullable|max:255',
-            'status' => 'nullable',
-            'breed_id' => 'nullable|exists:breeds,id',
-            'habitat_id' => 'required|array',  // Exiger un tableau d'ID d'habitats
-            'habitat_id.*' => 'exists:habitats,id',  // Vérifie que chaque ID d'habitat existe
-            'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        // Recherche et mise à jour de l'animal
-        $animal = Animal::findOrFail($id);
-        $animal->update($request->only('name', 'status', 'breed_id'));
-
-        // Synchronisation de l'habitat
-        $animal->habitats()->sync($request->input('habitat_id'));
-
-        // Gestion des nouvelles images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePath = $image->store('animal_images', 'public');
-                $imageModel = Image::create([
-                    'image_data' => $imagePath,
-                    'name' => $image->getClientOriginalName(),
-                ]);
-
-                $animal->images()->attach($imageModel->id);
-            }
-        }
-        
-        return response()->json(['message' => 'Animal mis à jour avec succès'], 200);
+{
+    if (!auth()->check()) {
+        abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
     }
+
+    $userRoles = auth()->user()->roles->pluck('label')->toArray();
+
+    if (!in_array('Admin', $userRoles) && !in_array('Employee', $userRoles)) {
+        abort(403, 'Vous n\'êtes pas autorisé à modifier cet animal.');
+    }
+
+    $request->validate([
+        'name' => 'nullable|max:255',
+        'status' => 'nullable',
+        'breed_id' => 'nullable|exists:breeds,id',
+        'habitat_id' => 'required|array',
+        'habitat_id.*' => 'exists:habitats,id',
+        'images' => 'nullable|array',
+        'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $animal = Animal::findOrFail($id);
+    $animal->update($request->only('name', 'status', 'breed_id'));
+    $animal->habitats()->sync($request->input('habitat_id'));
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $imagePath = $image->store('animal_images', 'public');
+            $imageModel = Image::create([
+                'image_data' => $imagePath,
+                'name' => $image->getClientOriginalName(),
+            ]);
+            $animal->images()->attach($imageModel->id);
+        }
+    }
+
+    return redirect()->route('admin.animals.show', $id)->with('success', 'Animal mis à jour avec succès');
+}
 
 
     // Supprimer un animal
