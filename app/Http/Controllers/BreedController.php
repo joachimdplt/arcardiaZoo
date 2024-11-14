@@ -47,7 +47,7 @@ class BreedController extends Controller
         abort(403, 'Vous n\'êtes pas autorisé à ajouter de race.');
     }
 
-    // Logique de création de la race
+    // Validation et création de la race
     $request->validate([
         'label' => 'required|string|max:255',
     ]);
@@ -56,26 +56,29 @@ class BreedController extends Controller
         'label' => $request->input('label'),
     ]);
 
-    return response()->json(['message' => 'Race créée avec succès'], 201);
+    // Redirection vers la page d'index des races avec un message de succès
+    return redirect()->route('admin.breeds')
+                     ->with('success', 'Race créée avec succès');
 }
 
-    // Supprimer une race
-    public function destroy($id)
-    {
-        $user = auth()->user();
-        if ($user===null) {
-            abort(403, 'Vous n\'êtes pas autorisé à supprimer cette race.');
-        }
-
-        $userRoles = $user->roles->pluck('label')->toArray();
-
-        // Interdire l'accès si l'utilisateur est Admin ou Employee
-        if (in_array('Admin', $userRoles)) {
-            abort(403, 'Vous n\'êtes pas autorisé à créer un rapport vétérinaire.');
-        }
-        $breed = Breed::findOrFail($id);
-        $breed->delete();
-
-        return redirect()->route('admin.breeds')->with('success', 'Race supprimée avec succès.');
+// Supprimer une race
+public function destroy($id)
+{
+    $user = auth()->user();
+    if ($user === null) {
+        abort(403, 'Vous n\'êtes pas autorisé à supprimer cette race.');
     }
+
+    $userRoles = $user->roles->pluck('label')->toArray();
+
+    // Autoriser l'accès si l'utilisateur est Admin, interdire si c'est un Employee ou Veterinary
+    if (in_array('Employee', $userRoles) || in_array('Veterinary', $userRoles)) {
+        abort(403, 'Vous n\'êtes pas autorisé à supprimer cette race.');
+    }
+
+    $breed = Breed::findOrFail($id);
+    $breed->delete();
+
+    return redirect()->route('admin.breeds')->with('success', 'Race supprimée avec succès.');
+}
 }
