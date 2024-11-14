@@ -6,7 +6,7 @@ export default function AnimalCreate({ breeds, habitats }) {
         name: '',
         status: '',
         breed_id: '',
-        images: [],  // Champ pour l'image
+        images: [],  // Champ pour les images
         habitat_id: '',
     });
 
@@ -18,18 +18,18 @@ export default function AnimalCreate({ breeds, habitats }) {
         formData.append('status', data.status);
         formData.append('breed_id', data.breed_id);
         formData.append('habitat_id', data.habitat_id);
-        
-       // Ajouter les images dans formData
-       for (let i = 0; i < data.images.length; i++) {
-        formData.append('images[]', data.images[i]);
-    }
 
-    post('/admin/animals', {
-        data: formData,
-        onError: () => {
-            console.log('Erreur lors de la soumission du formulaire');
+        // Ajouter les images dans formData
+        for (let i = 0; i < data.images.length; i++) {
+            formData.append('images[]', data.images[i]);
         }
-    });
+
+        // Utilisez formData directement sans le passer dans un objet `data`
+        post('/admin/animals', formData, {
+            onError: () => {
+                console.log('Erreur lors de la soumission du formulaire');
+            }
+        });
     }
 
     return (
@@ -81,7 +81,7 @@ export default function AnimalCreate({ breeds, habitats }) {
                     <select
                         className="w-full p-2 border rounded"
                         value={data.habitat_id}
-                        onChange={e => setData('habitat_id', e.target.value)}
+                        onChange={e => setData('habitat_id', [e.target.value])} // Mettez cette ligne ici
                     >
                         <option value="">Sélectionner un habitat</option>
                         {habitats.map(habitat => (
@@ -90,7 +90,7 @@ export default function AnimalCreate({ breeds, habitats }) {
                             </option>
                         ))}
                     </select>
-                    {errors.habitat_id && <p className="text-red-500 text-xs mt-1">{errors.habitats_id}</p>}
+                    {errors.habitat_id && <p className="text-red-500 text-xs mt-1">{errors.habitat_id}</p>}
                 </div>
 
                 <div className="mb-4">
