@@ -1,26 +1,48 @@
 import React, { useState } from 'react';
 
 const Wildlife = ({ habitats = [], services = [] }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const animals = habitats.reduce((acc, habitat) => [...acc, ...habitat.animals], []);
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    setIsExpanded(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setIsExpanded(false);
+  };
+
   return (
-    <div className="wildlife-carousel w-full mt-4 h-full flex flex-col justify-center items-center">
+    <div 
+      className={`wildlife-carousel w-full h-full flex flex-col justify-center items-center transition-colors duration-500 ${
+        isHovered ? 'bg-white' : ''
+      }`}
+      style={{ backgroundColor: isHovered ? 'white' : '#A6A26A' }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div 
         className="w-full max-w-3xl p-4 sm:p-6 md:p-8 text-center"
-        onMouseLeave={() => setIsOpen(false)}
+        onClick={() => setIsExpanded(!isExpanded)}
       >
-        <h1 
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 cursor-pointer hover:text-green-600"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          Wildlife Expérience
-        </h1>
-        <p className="text-sm sm:text-base md:text-lg lg:text-xl">Un parc animalier de réadaptation à la vie sauvage</p>
+      <h1 
+        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 cursor-pointer transition-colors duration-300 ${
+          isHovered ? '' : 'text-white'
+        }`}
+        style={{ color: isHovered ? '#38401A' : 'white' }}
+      >
+        Wildlife Expérience
+      </h1>
+        <p className={`text-sm sm:text-base md:text-lg lg:text-xl ${isHovered ? 'text-gray-800' : 'text-gray-200'}`}>
+          Un parc animalier de réadaptation à la vie sauvage
+        </p>
 
         <div 
           className={`transition-all duration-500 ease-in-out ${
-            isOpen ? 'max-h-[600px] opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
+            isExpanded ? 'max-h-screen opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
           }`}
         >
           {/* Grid pour les habitats */}
