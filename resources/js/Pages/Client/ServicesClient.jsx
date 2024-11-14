@@ -2,62 +2,31 @@ import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 
 const ServicesClient = () => {
+  // Récupérer les services via Inertia
   const { services } = usePage().props;
-  const [isExpanded, setIsExpanded] = useState(false); // Controls content visibility
-  const [isLocked, setIsLocked] = useState(false); // Controls locked state for background color
-
-  const handleMouseEnter = () => {
-    setIsLocked(true); // Lock the background color
-    setIsExpanded(true); // Show the content on hover
-  };
-
-  const handleMouseLeave = () => {
-    setIsExpanded(false); // Hide the content on mouse leave
-    setIsLocked(false); // Reset the lock to allow the background to turn white
-  };
+  console.log(services);  // Vérifier les données dans la console
 
   return (
-    <div 
-      id="servicesClient" 
-      className={`flex flex-col items-center justify-center w-full transition-colors duration-500 ${
-        isLocked ? 'bg-custom-color' : 'bg-white'
-      }`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={() => setIsExpanded(!isExpanded)} // Toggle content visibility on click
-      style={{ backgroundColor: isLocked ? '#A6A26A' : 'white' }}
-    >
-      <h1 
-        className={`text-7xl mt-7 font-bold cursor-pointer transition-colors duration-300 ${
-          isLocked ? 'text-white' : 'text-black'
-        }`}
-      >
-        Découvrez nos services
-      </h1>
-      <p 
-        className={`mt-2 text-center transition-colors duration-300 ${
-          isLocked ? 'text-white' : 'text-black'
-        }`}
-      >
-        Des services sur mesure pour vous accompagner dans votre expérience au parc.
-      </p>
+    <div id="servicesClient" className="min-h-screen flex flex-col items-center justify-center bg-white">
+      <h1 className="text-4xl font-bold">Découvrez nos services</h1>
+      <p className="mt-4">Des services sur mesure pour vous accompagner dans votre expérience au parc.</p>
 
-      {/* Content section with transition */}
-      <div className={`transition-all duration-500 ease-in-out w-full ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+      <div className="mt-8">
         {Array.isArray(services) && services.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
-              <div key={service.id} className="border p-4 rounded-lg shadow-lg bg-white hover:bg-gray-100">
+              <div key={service.id} className="border p-4 rounded-lg shadow-lg">
+                {/* Carrousel d'images pour chaque service */}
                 <ImageCarousel images={service.images} />
 
-                <h3 className="text-xl font-bold mb-1">{service.name}</h3>
-                <p className="text-sm">{service.description}</p>
-                <p className="mt-1 text-gray-600 text-sm">Heures d'ouverture : {service.start_time} - {service.end_time}</p>
+                <h3 className="text-xl font-bold mb-2">{service.name}</h3>
+                <p>{service.description}</p>
+                <p className="mt-2 text-gray-600">Heures d'ouverture : {service.start_time} - {service.end_time}</p>
                 
-                {/* Button with bg color applied */}
+                {/* Lien vers la page de détails du service */}
                 <Link
                   href={`/services/${service.id}`}
-                  className="mt-3 inline-block bg-[#38401A] text-white py-2 px-4 rounded hover:bg-green-700 text-sm"
+                  className="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
                 >
                   Voir plus
                 </Link>
@@ -65,37 +34,42 @@ const ServicesClient = () => {
             ))}
           </div>
         ) : (
-          <p className="mt-4">Chargement des services...</p>
+          <p>Chargement des services...</p>
         )}
       </div>
     </div>
   );
 };
 
-// Image carousel component
+// Composant pour le carrousel d'images
 const ImageCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Passer à l'image suivante
   const nextImage = () => {
     setCurrentIndex((currentIndex + 1) % images.length);
   };
 
+  // Passer à l'image précédente
   const prevImage = () => {
     setCurrentIndex((currentIndex - 1 + images.length) % images.length);
   };
 
+  // Si pas d'images, ne rien afficher
   if (images.length === 0) {
     return <p>Aucune image disponible</p>;
   }
 
   return (
     <div className="relative">
+      {/* Affichage de l'image actuelle */}
       <img
         src={`/storage/${images[currentIndex].image_data}`}
         alt={`Image ${currentIndex + 1}`}
         className="w-full h-48 object-cover rounded-t-lg"
       />
 
+      {/* Boutons pour naviguer dans le carrousel */}
       {images.length > 1 && (
         <>
           <button
