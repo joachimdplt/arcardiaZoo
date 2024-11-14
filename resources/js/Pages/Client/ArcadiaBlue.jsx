@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 
 const ArcadiaBlue = ({ isActive, onMouseEnter, onMouseLeave }) => {
-  // Les chemins des images
   const images = [
     '/storage/habitat_images/bgArcadia.png',
     '/storage/habitat_images/bg2arcadia.png',
     '/storage/habitat_images/bg3arcadia.png'
   ];
 
-  // État pour gérer l'index de l'image actuelle
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false); // Pour gérer l'état de transition
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Fonction pour aller à l'image suivante
   const handleNextImage = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
       setTimeout(() => {
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         setIsTransitioning(false);
-      }, 500); // Durée de la transition
+      }, 500);
     }
   };
 
-  // Fonction pour aller à l'image précédente
   const handlePrevImage = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
@@ -32,37 +28,41 @@ const ArcadiaBlue = ({ isActive, onMouseEnter, onMouseLeave }) => {
           prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
         setIsTransitioning(false);
-      }, 500); // Durée de la transition
+      }, 500);
     }
   };
 
   return (
     <div
       className={`relative transition-all duration-500 ease-in-out ${
-        isActive ? 'w-full' : 'w-1/3'
-      } h-screen bg-blue-100 flex items-center justify-center`}
+        isActive ? 'flex-1 w-full' : 'flex-1 w-full sm:w-1/3'
+      } h-screen flex items-center justify-center`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      style={{ minHeight: '100vh' }} // Assure une hauteur de 100% de l'écran
     >
-      {/* Conteneur des images */}
+      {/* Conteneur des images avec `object-cover` */}
       <div className="relative w-full h-full overflow-hidden">
         {images.map((image, index) => (
           <div
             key={index}
-            className={`absolute top-0 left-0 w-full h-full bg-cover bg-center transition-opacity duration-500 ease-in-out ${
+            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${
               currentImageIndex === index ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{
-              backgroundImage: `url(${image})`,
-            }}
-          />
+          >
+            <img
+              src={image}
+              alt={`Background ${index}`}
+              className="w-full h-full object-cover" // Assure le remplissage complet sans déformation
+            />
+          </div>
         ))}
       </div>
 
       {/* Bouton précédent */}
       <button
         onClick={handlePrevImage}
-        className="absolute left-5 bg-white bg-opacity-50 px-3 py-2 rounded-full z-10"
+        className="absolute left-5 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 px-3 py-2 rounded-full z-10 hover:bg-opacity-100 transition duration-300"
       >
         &#8592;
       </button>
@@ -70,7 +70,7 @@ const ArcadiaBlue = ({ isActive, onMouseEnter, onMouseLeave }) => {
       {/* Bouton suivant */}
       <button
         onClick={handleNextImage}
-        className="absolute right-5 bg-white bg-opacity-50 px-3 py-2 rounded-full z-10"
+        className="absolute right-5 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 px-3 py-2 rounded-full z-10 hover:bg-opacity-100 transition duration-300"
       >
         &#8594;
       </button>
