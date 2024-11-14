@@ -11,17 +11,16 @@ const Header = () => {
 
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      setIsMenuOpen(false); // Ferme le menu mobile après navigation
+      setIsMenuOpen(false); // Close the mobile menu after navigation
     }
   };
 
   return (
-    
-    <header className="fixed w-full top-0 z-50 bg-green-800 text-white">
+    <header className="fixed w-full top-0 z-50 bg-[#38401A] text-white">
       <div className="flex justify-between items-center px-4 py-3">
         <div className="text-2xl font-bold">Arcadia WILDLIFE</div>
 
-        {/* Bouton menu hamburger/croix pour les petits écrans */}
+        {/* Hamburger/Cross button for small screens */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="relative w-8 h-8 md:hidden focus:outline-none"
@@ -39,7 +38,7 @@ const Header = () => {
           ></span>
         </button>
 
-        {/* Navbar pour les écrans moyens et plus grands */}
+        {/* Navbar for medium and larger screens */}
         <nav className="hidden md:flex space-x-6 items-center">
           <a href="#accueil" onClick={handleNavLinkClick} className="hover:text-gray-300">
             ACCUEIL
@@ -57,7 +56,7 @@ const Header = () => {
             CONTACT
           </a>
 
-          {/* Log in avec tooltip */}
+          {/* Log in with tooltip */}
           <div 
             className="relative"
             onMouseEnter={() => setShowTooltip(true)}
@@ -75,7 +74,7 @@ const Header = () => {
         </nav>
       </div>
 
-      {/* Overlay sombre pour l'arrière-plan quand le menu est ouvert */}
+      {/* Overlay background when the mobile menu is open */}
       {isMenuOpen && (
         <div 
           className="fixed inset-0 bg-black opacity-50 z-40"
@@ -83,10 +82,10 @@ const Header = () => {
         ></div>
       )}
 
-      {/* Menu déroulant pour les petits écrans */}
+      {/* Dropdown menu for small screens */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-y-0 right-0 w-4/5 max-w-xs bg-green-700 text-white flex flex-col space-y-4 py-6 px-4 overflow-y-auto transition-transform transform translate-x-0 z-50"
+          className="fixed inset-y-0 right-0 w-4/5 max-w-xs bg-[#38401A] text-white flex flex-col space-y-4 py-6 px-4 overflow-y-auto transition-transform transform translate-x-0 z-50"
           style={{ transition: "transform 0.3s ease-in-out" }}
         >
           <a href="#accueil" onClick={handleNavLinkClick} className="hover:text-gray-300">
