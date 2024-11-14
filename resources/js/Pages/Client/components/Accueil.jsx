@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReviewsClientShow from '../ReviewsClientShow';
 import ArcadiaBlue from '../ArcadiaBlue';
 import Wildlife from './Wildlife';
 
 const Accueil = ({ approvedReviews = [], animals = [], habitats = [], services = [] }) => {
-  console.log('Données dans Accueil:', { approvedReviews, animals, habitats, services });
-
   const [activeElement, setActiveElement] = useState(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  // Detect screen size for full-screen mode on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    handleResize(); // Check initial size
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleMouseEnter = (id) => {
     setActiveElement(id);
@@ -18,35 +27,42 @@ const Accueil = ({ approvedReviews = [], animals = [], habitats = [], services =
 
   return (
     <div id="accueil" className="relative min-h-screen overflow-hidden">
-      <div className="flex flex-col sm:flex-row min-h-screen overflow-hidden">
-        {/* Composant ArcadiaBlue avec les gestionnaires de survol */}
-        <ArcadiaBlue
-          isActive={activeElement === 'blue'}
-          onMouseEnter={() => handleMouseEnter('blue')}
-          onMouseLeave={handleMouseLeave}
-          className="w-full sm:w-1/3 h-screen"
-        />
-
-        {/* Composant Wildlife avec les données */}
+      <div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-col sm:flex-row'} min-h-screen overflow-hidden`}>
+        
+        {/* ArcadiaBlue Component */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            activeElement === 'habitats' ? 'w-full' : 'w-full sm:w-1/3'
-          } h-1/2 sm:h-screen bg-green-100 flex items-center justify-center`}
+            activeElement === 'blue' || isSmallScreen ? 'w-full h-screen' : 'w-full sm:w-1/3 h-screen'
+          } flex items-center justify-center bg-cover`}
+          onMouseEnter={() => handleMouseEnter('blue')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <ArcadiaBlue isActive={activeElement === 'blue' || isSmallScreen} />
+        </div>
+
+        {/* Wildlife Component */}
+        <div
+          className={`transition-all duration-500 ease-in-out ${
+            activeElement === 'habitats' || isSmallScreen ? 'w-full h-screen bg-white' : 'w-full sm:w-1/3 h-screen'
+          } flex items-center justify-center`}
           onMouseEnter={() => handleMouseEnter('habitats')}
           onMouseLeave={handleMouseLeave}
         >
           <Wildlife habitats={habitats} animals={animals} services={services} />
         </div>
 
-        {/* Troisième section - Avis */}
+        {/* Reviews Section */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            activeElement === 'yellow' ? 'w-full' : 'w-full sm:w-1/3'
-          } h-1/2 sm:h-screen bg-gray-100 flex items-center justify-center`}
-          onMouseEnter={() => handleMouseEnter('yellow')}
+            activeElement === 'reviews' || isSmallScreen ? 'w-full h-screen bg-white' : 'w-full sm:w-1/3 h-screen'
+          } flex items-center justify-center`}
+          style={{ backgroundColor: activeElement === 'reviews' || isSmallScreen ? 'white' : '#848C42' }}
+          onMouseEnter={() => handleMouseEnter('reviews')}
           onMouseLeave={handleMouseLeave}
         >
-          <ReviewsClientShow reviews={approvedReviews} />
+          <div className="flex items-center justify-center w-full h-full">
+            <ReviewsClientShow isHovered={activeElement === 'reviews' || isSmallScreen} reviews={approvedReviews} />
+          </div>
         </div>
       </div>
     </div>
