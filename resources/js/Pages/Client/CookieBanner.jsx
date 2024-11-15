@@ -5,15 +5,26 @@ const CookieBanner = () => {
 
     useEffect(() => {
         const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-        if (!cookiesAccepted) {
+        const cookiesRefused = localStorage.getItem('cookiesRefused');
+        
+        if (!cookiesAccepted && !cookiesRefused) {
             setIsVisible(true);
         }
     }, []);
 
     const handleAccept = () => {
-        console.log('Bouton accepté cliqué');
         localStorage.setItem('cookiesAccepted', 'true');
         setIsVisible(false);
+    };
+
+    const handleRefuse = () => {
+        localStorage.setItem('cookiesRefused', 'true');
+        setIsVisible(false);
+    };
+
+    const handleSettings = () => {
+        // Redirecting to the mentions légales page
+        window.location.href = '/mentions-legales';
     };
 
     const styles = {
@@ -51,6 +62,10 @@ const CookieBanner = () => {
         },
         btnDeny: {
             backgroundColor: 'grey',
+            marginRight: '1rem',
+        },
+        btnSettings: {
+            backgroundColor: '#555',
         }
     };
 
@@ -64,7 +79,10 @@ const CookieBanner = () => {
                     <button style={{ ...styles.btn, ...styles.btnSuccess }} onClick={handleAccept}>
                         Accepter les cookies
                     </button>
-                    <button style={{ ...styles.btn, ...styles.btnDeny }}>
+                    <button style={{ ...styles.btn, ...styles.btnDeny }} onClick={handleRefuse}>
+                        Refuser les cookies
+                    </button>
+                    <button style={{ ...styles.btn, ...styles.btnSettings }} onClick={handleSettings}>
                         Paramètres des cookies
                     </button>
                 </div>
