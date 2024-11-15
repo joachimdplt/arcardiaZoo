@@ -45,12 +45,13 @@ const ContactsClient = ({ isHovered }) => {
   return (
     <section
       id="contactsClient"
-      className="transition-all duration-500 ease-in-out flex flex-col items-center justify-center w-full"
+      className="transition-all rounded-xl duration-500 ease-in-out flex flex-col items-center justify-center w-full shadow-xl"
       style={{ backgroundColor: '#848C42' }}
     >
       <h2
         onClick={() => setIsExpanded(!isExpanded)}
         className="text-5xl mt-6 font-bold cursor-pointer text-white transition-transform duration-300"
+        style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }} // Ombre portée sur le titre principal
       >
         Nous contacter
       </h2>
@@ -66,10 +67,12 @@ const ContactsClient = ({ isHovered }) => {
         }`}
       >
         <div className="md:flex md:justify-center">
-          <div className="w-full max-w-3xl transform transition-all duration-500 ease-in-out">
+          <div className="w-full max-w-3xl transform transition-all duration-500 ease-in-out shadow-lg rounded-lg bg-white">
             {!sent ? (
-              <form className="p-12 bg-gray-100 shadow-lg rounded-lg" onSubmit={handleSubmit}>
-                <h3 className="text-gray-800 text-2xl font-bold mb-4">Informations Personnelles</h3>
+              <form className="p-12 bg-gray-100 rounded-lg" onSubmit={handleSubmit}>
+                <h3 className="text-gray-800 text-2xl font-bold mb-4" style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.3)' }}>
+                  Informations Personnelles
+                </h3>
                 <input
                   type="text"
                   id="name"
@@ -92,7 +95,9 @@ const ContactsClient = ({ isHovered }) => {
                 />
                 {errors.email && <p className="text-red-500">{errors.email}</p>}
                 
-                <h3 className="text-gray-800 text-2xl font-bold mb-4">Détails de la Demande</h3>
+                <h3 className="text-gray-800 text-2xl font-bold mb-4" style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.3)' }}>
+                  Détails de la Demande
+                </h3>
                 <input
                   type="text"
                   id="subject"
@@ -104,7 +109,9 @@ const ContactsClient = ({ isHovered }) => {
                 />
                 {errors.subject && <p className="text-red-500">{errors.subject}</p>}
                 
-                <h3 className="text-gray-800 text-2xl font-bold mb-4">Votre Message</h3>
+                <h3 className="text-gray-800 text-2xl font-bold mb-4" style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.3)' }}>
+                  Votre Message
+                </h3>
                 <textarea
                   id="message"
                   placeholder="Votre message..."
@@ -127,7 +134,9 @@ const ContactsClient = ({ isHovered }) => {
               </form>
             ) : (
               <div className="p-12 bg-green-100 shadow-lg rounded-lg text-center">
-                <h3 className="text-3xl font-bold text-green-700">{responseMessage}</h3>
+                <h3 className="text-3xl font-bold text-green-700" style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.3)' }}>
+                  {responseMessage}
+                </h3>
               </div>
             )}
           </div>
