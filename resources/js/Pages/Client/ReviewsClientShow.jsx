@@ -30,15 +30,18 @@ const ReviewsClientShow = ({ isHovered }) => {
       onMouseLeave={handleMouseLeave}
     >
       <div className="container mx-auto px-4 sm:px-6 md:px-12 text-center">
-    <h2 
-      className={`text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8 sm:mb-10 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110`}
-      style={{ color: isHoveredState ? '#38401A' : 'white' }}
-      onClick={() => setIsExpanded(!isExpanded)}
-      onMouseEnter={() => setIsHoveredState(true)}
-      onMouseLeave={() => setIsHoveredState(false)}
-    >
-      Avis des visiteurs
-    </h2>
+        <h2 
+          className={`text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8 sm:mb-10 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110`}
+          style={{ 
+            color: isHoveredState ? '#38401A' : 'white', 
+            textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' // Ombre portée
+          }}
+          onClick={() => setIsExpanded(!isExpanded)}
+          onMouseEnter={() => setIsHoveredState(true)}
+          onMouseLeave={() => setIsHoveredState(false)}
+        >
+          Avis des visiteurs
+        </h2>
 
         <div
           ref={reviewsRef}
@@ -57,7 +60,13 @@ const ReviewsClientShow = ({ isHovered }) => {
                 ))
               ) : (
                 <div className="text-center p-4 sm:p-8">
-                  <h2 className="text-base sm:text-lg md:text-2xl font-bold">
+                  <h2 
+                    className="text-base sm:text-lg md:text-2xl font-bold transition-colors duration-300"
+                    style={{ 
+                      color: isHoveredState ? '#38401A' : '#A6A26A', 
+                      textShadow: '1px 1px 5px rgba(0, 0, 0, 0.4)' // Ombre portée
+                    }}
+                  >
                     Aucun avis pour le moment.
                   </h2>
                   <p className="text-sm sm:text-base">
