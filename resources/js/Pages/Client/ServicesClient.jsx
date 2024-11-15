@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import useInViewAnimation from './useInViewAnimation';
 
 const ServicesClient = ({ isHovered }) => {
   const { services } = usePage().props;
-
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+
+  // Use the in-view hook to detect when the component enters the viewport
+  const [ref, isInView] = useInViewAnimation(0.2);
 
   const handleMouseEnter = () => {
     setIsLocked(true);
@@ -19,19 +22,25 @@ const ServicesClient = ({ isHovered }) => {
 
   return (
     <div
+      ref={ref}
       id="servicesClient"
-      className={`flex flex-col items-center justify-center w-full transition-colors duration-500 ${
-        isLocked ? 'bg-custom-color' : 'bg-white'
-      }`}
+      className={`flex flex-col rounded-xl items-center justify-center w-full transition-all duration-1000 ease-in-out transform ${
+        isInView ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+      } ${isLocked ? 'bg-custom-color' : 'bg-white'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => setIsExpanded(!isExpanded)}
-      style={{ backgroundColor: isLocked ? '#A6A26A' : 'white' }}
+      style={{
+        backgroundColor: isLocked ? '#A6A26A' : 'white',
+        boxShadow: isExpanded ? '0px 10px 20px rgba(0, 0, 0, 0.3)' : 'none',
+        borderRadius: '12px',
+      }}
     >
       <h1
         className={`text-7xl mt-7 font-bold cursor-pointer transition-colors duration-300 ${
           isLocked ? 'text-white' : 'text-black'
         }`}
+        style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }} // Ombre portée ajoutée
       >
         Découvrez nos services
       </h1>
@@ -39,18 +48,24 @@ const ServicesClient = ({ isHovered }) => {
         className={`mt-2 text-center transition-colors duration-300 ${
           isLocked ? 'text-white' : 'text-black'
         }`}
+        style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.5)' }} // Ombre portée ajoutée
       >
         Des services sur mesure pour vous accompagner dans votre expérience au parc.
       </p>
 
-      <div className={`transition-all duration-500 ease-in-out w-full ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+      <div className={`transition-all duration-1000 ease-in-out w-full ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
         {Array.isArray(services) && services.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
             {services.map((service) => (
               <div key={service.id} className="border p-4 rounded-lg shadow-lg bg-white hover:bg-gray-100">
                 <ImageCarousel images={service.images} />
 
-                <h3 className="text-xl font-bold mb-1">{service.name}</h3>
+                <h3
+                  className="text-xl font-bold mb-1"
+                  style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.4)' }} // Ombre portée sur le titre de chaque service
+                >
+                  {service.name}
+                </h3>
                 <p className="text-sm">{service.description}</p>
                 <p className="mt-1 text-gray-600 text-sm">Heures d'ouverture : {service.start_time} - {service.end_time}</p>
 
@@ -71,7 +86,7 @@ const ServicesClient = ({ isHovered }) => {
   );
 };
 
-// Composant pour le carrousel d'images
+// Image carousel component
 const ImageCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
