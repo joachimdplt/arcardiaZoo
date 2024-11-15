@@ -80,7 +80,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <span className="block text-sm text-center text-gray-200 mt-4">
-        © 2024 jd.tech. All Rights Reserved. Built with React and Laravel
+        © 2024 ajd-world.com All Rights Reserved. Built with React and Laravel
       </span>
     </footer>
   );
