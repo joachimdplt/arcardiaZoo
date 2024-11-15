@@ -17,26 +17,40 @@ const Wildlife = ({ habitats = [], services = [] }) => {
 
   return (
     <div 
-      className={`wildlife-carousel w-full h-full flex flex-col justify-center items-center transition-colors duration-500 ${
-        isHovered ? 'bg-white' : ''
-      }`}
+      className="relative w-full h-full flex flex-col justify-center items-center transition-colors duration-500"
       style={{ backgroundColor: isHovered ? 'white' : '#A6A26A' }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      {/* Background image that appears on hover */}
+      {isHovered && (
+        <div 
+          className="absolute inset-0 z-0 w-full h-full"
+          style={{
+            backgroundImage: `url("/storage/habitat_images/GrvlrnG6O0h0XdjQIUt25EMH3MR1U6COXCUPpzFD.png")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      )}
+
+      {/* Content section without blur or shadow when collapsed */}
       <div 
-        className="w-full max-w-3xl p-4 sm:p-6 md:p-8 text-center"
+        className={`relative z-10 w-full max-w-3xl p-4 sm:p-6 md:p-8 text-center transition-all duration-300 ${
+          isExpanded ? 'bg-opacity-50 bg-white rounded-lg shadow-lg' : ''
+        }`} 
         onClick={() => setIsExpanded(!isExpanded)}
       >
-      <h1 
-        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 cursor-pointer transition-colors duration-300 ${
-          isHovered ? '' : 'text-white'
-        }`}
-        style={{ color: isHovered ? '#38401A' : 'white' }}
-      >
-        Wildlife Expérience
-      </h1>
-        <p className={`text-sm sm:text-base md:text-lg lg:text-xl ${isHovered ? 'text-gray-800' : 'text-gray-200'}`}>
+        <h1 
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-4 cursor-pointer text-white transition-colors duration-300"
+          style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }}
+        >
+          Wildlife Expérience
+        </h1>
+        <p 
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white font-bold"
+          style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }}
+        >
           Un parc animalier de réadaptation à la vie sauvage
         </p>
 
@@ -45,7 +59,7 @@ const Wildlife = ({ habitats = [], services = [] }) => {
             isExpanded ? 'max-h-screen opacity-100 overflow-y-auto' : 'max-h-0 opacity-0 overflow-hidden'
           }`}
         >
-          {/* Grid pour les habitats */}
+          {/* Grid for habitats */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-3">
             {habitats.map((habitat) => (
               <div key={habitat.id} className="p-3 sm:p-4 bg-white rounded shadow-md">
@@ -61,7 +75,7 @@ const Wildlife = ({ habitats = [], services = [] }) => {
             ))}
           </div>
 
-          {/* Grid pour les services */}
+          {/* Grid for services */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-3">
             {services.slice(1, 4).map((service) => (
               <div key={service.id} className="p-3 sm:p-4 bg-white rounded shadow-md">
@@ -77,7 +91,7 @@ const Wildlife = ({ habitats = [], services = [] }) => {
             ))}
           </div>
 
-          {/* Grid pour les animaux */}
+          {/* Grid for animals */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4 sm:mt-6 md:mt-8 px-2 sm:px-3">
             {animals.slice(0, 3).map((animal) => (
               <div key={animal.id} className="p-3 sm:p-4 bg-white rounded shadow-md">
