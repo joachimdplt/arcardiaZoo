@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HabitatController;
-use App\Http\Controllers\AnimalFeedController;
 use App\Http\Controllers\VeterinaryReportController;
 use App\Http\Controllers\BreedController;
 use App\Http\Controllers\ServiceController;
@@ -19,14 +18,7 @@ use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\PageController;
 
 
-// Page d'accueil
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [ClientController::class, 'index'])->name('client.home');
 
 // Tableau de bord
 Route::get('/dashboard', [DashboardController::class, 'index'])
