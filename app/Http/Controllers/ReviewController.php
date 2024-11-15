@@ -8,59 +8,43 @@ use Inertia\Inertia;
 
 class ReviewController extends Controller
 {
-    // Afficher les avis, à la fois approuvés et en attente d'approbation
     public function index()
-    {
-        // Récupérer les avis en attente et les avis approuvés
-        $pendingReviews = Review::where('is_visible', false)->get();
-        $approvedReviews = Review::where('is_visible', true)->get();
+{
+    $pendingReviews = Review::where('is_visible', false)->get();
+    $approvedReviews = Review::where('is_visible', true)->get();
+    $userRoles = auth()->user()->roles->pluck('label')->toArray(); // Vérifiez que "Employee" est inclus ici
 
-        // Retourner la vue avec les avis
-        return Inertia::render('Admin/Reviews', [
-            'pendingReviews' => $pendingReviews,
-            'approvedReviews' => $approvedReviews,
-        ]);
-    }
+    return Inertia::render('Admin/Reviews', [
+        'pendingReviews' => $pendingReviews,
+        'approvedReviews' => $approvedReviews,
+        'userRoles' => $userRoles, // Envoyez les rôles de l'utilisateur au frontend
+    ]);
+}
 
     // Approuver un avis (uniquement pour les employés)
     public function approve($id)
     {
         $user = auth()->user();
-        if ($user===null) {
-            abort(403, 'Vous n\'êtes pas autorisé à voir ce rapport vétérinaire.');
+        if (!$user || !$user->roles->contains('label', 'Employee')) {
+            abort(403, 'Unauthorized action.');
         }
-        $userRoles = $user->roles->pluck('label')->toArray();
-
-        // Vérifier que l'utilisateur a le rôle d'employé
-        if (!in_array('Employee', $userRoles)) {
-            abort(403, 'Vous n\'êtes pas autorisé à approuver cet avis.');
-        }
-
-        // Trouver l'avis et le marquer comme approuvé
+    
         $review = Review::findOrFail($id);
         $review->update(['is_visible' => true]);
-
-        return redirect()->route('admin.reviews')->with('success', 'Avis approuvé avec succès.');
+    
+        return redirect()->route('admin.reviews')->with('success', 'Review approved successfully.');
     }
-
-    // Supprimer un avis (uniquement pour les employés)
+    
     public function destroy($id)
     {
         $user = auth()->user();
-        if ($user===null) {
-            abort(403, 'Vous n\'êtes pas autorisé à supprimer cet avis');
+        if (!$user || !$user->roles->contains('label', 'Employee')) {
+            abort(403, 'Unauthorized action.');
         }
-        $userRoles = $user->roles->pluck('label')->toArray();
-
-        // Vérifier que l'utilisateur a le rôle d'employé
-        if (!in_array('Employee', $userRoles)) {
-            abort(403, 'Vous n\'êtes pas autorisé à supprimer cet avis.');
-        }
-
-        // Trouver et supprimer l'avis
+    
         $review = Review::findOrFail($id);
         $review->delete();
-
-        return redirect()->route('admin.reviews')->with('success', 'Avis supprimé avec succès.');
+    
+        return redirect()->route('admin.reviews')->with('success', 'Review deleted successfully.');
     }
 }
