@@ -40,20 +40,21 @@ const ReviewsClient = ({ isHovered }) => {
   return (
     <section
       id="reviewsClient"
-      className="transition-all duration-500 ease-in-out flex flex-col items-center justify-center w-full"
+      className="transition-all duration-500 rounded-xl ease-in-out flex flex-col items-center justify-center w-full shadow-xl"
       style={{ backgroundColor: '#848C42' }}
     >
       <h2
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-5xl font-bold cursor-pointer text-white transition-transform duration-300"
-        >
-        Laisser votre avis
+        className="text-5xl mt-10 font-bold cursor-pointer text-white transition-transform duration-300"
+        style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }} // Ombre portée sur le titre principal
+      >
+        Votre avis compte
       </h2>
 
       <p className="mt-4 mb-10 text-white text-lg">
         Partagez votre expérience avec nous.
       </p>
-x
+
       <div
         ref={formRef}
         className={`transition-all duration-500 ease-in-out w-full ${
@@ -61,9 +62,9 @@ x
         }`}
       >
         <div className="md:flex md:justify-center">
-          <div className="w-full max-w-3xl transform transition-all duration-500 ease-in-out">
+          <div className="w-full max-w-3xl transform transition-all duration-500 ease-in-out shadow-lg rounded-lg bg-white">
             {!sent ? (
-              <form className="p-12 bg-gray-100 shadow-lg rounded-lg" onSubmit={handleSubmit}>
+              <form className="p-12 bg-gray-100 rounded-lg" onSubmit={handleSubmit}>
                 <div className="mb-8">
                   <label className="block text-gray-700 text-2xl font-bold mb-4" htmlFor="name">
                     Pseudo
@@ -110,7 +111,12 @@ x
               </form>
             ) : (
               <div className="p-12 bg-green-100 shadow-lg rounded-lg text-center">
-                <h3 className="text-3xl font-bold text-green-700">Merci pour votre message !</h3>
+                <h3
+                  className="text-3xl font-bold text-green-700"
+                  style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.4)' }} // Ombre portée sur le message de confirmation
+                >
+                  Merci pour votre message !
+                </h3>
               </div>
             )}
           </div>
