@@ -16,20 +16,40 @@ use App\Http\Controllers\AnimalFeedingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\PageController;
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/', [ClientController::class, 'index'])->name('client.home');
+
+
+// Page de connexion
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
+// Mentions légales
+Route::get('/mentions-legales', [PageController::class, 'showLegalMentions'])->name('legal.mentions');
+
+// Routes protégées par l'authentification
+Route::middleware(['auth'])->group(function () {
+
+    // Déconnexion
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    // Tableau de bord
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('verified');
+
+    // Gestion du profil utilisateur
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
 
 // Tableau de bord
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// Gestion du profil utilisateur
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -118,13 +138,12 @@ Route::get('/admin/animals/{animalId}/feedings', [AnimalFeedingController::class
 });
 
 // Pages clients
-Route::get('/client', [ClientController::class, 'index'])->name('client.home');
 Route::get('/client/services', [ClientController::class, 'services'])->name('client.services');
 Route::get('/services/{id}', [ClientController::class, 'showService'])->name('client.service.show');
 Route::get('/client/habitats', [ClientController::class, 'habitats'])->name('client.habitats');
 Route::get('/habitats/{id}', [ClientController::class, 'showHabitat'])->name('client.habitat.show');
 Route::get('/animals/{id}', [ClientController::class, 'showAnimal'])->name('client.animal.show');
-Route::post('/reviews', [ClientController::class, 'storeReview'])->name('reviews.store');
+Route::post('/reviews', [ClientController::class, 'storeReview'])->name('client.reviews.store');
 Route::post('/contact/submit', [ClientController::class, 'storeMessage']);
 Route::get('/contact', [ClientController::class, 'contact'])->name('client.contact');
 
