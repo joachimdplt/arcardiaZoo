@@ -1,66 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# **Arcadia Zoo**
 
-## About Laravel
+## **Description**
+Arcadia Zoo est une application web conçue pour la gestion et la consultation des informations du Zoo Arcadia. Elle propose des fonctionnalités adaptées aux visiteurs, employés, vétérinaires et administrateurs, tout en offrant une navigation intuitive et des données centralisées.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## **Fonctionnalités principales**
+- **Visiteurs** :
+  - Visualiser les habitats et les animaux.
+  - Découvrir les services et horaires du zoo.
+  - Publier et consulter des avis validés par les employés.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Employés** :
+  - Gérer les avis des visiteurs.
+  - Consulter les rapports vétérinaires.
+  - Enregistrer les actions liées aux animaux (alimentation, etc.).
 
-## Learning Laravel
+- **Vétérinaires** :
+  - Ajouter et consulter les rapports de santé des animaux.
+  - Valider l’état des habitats.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Administrateurs** :
+  - Gérer les utilisateurs, habitats, services et statistiques.
+  - Superviser les rapports vétérinaires et les avis visiteurs.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## **Technologies utilisées**
+- **Frontend** : React, Tailwind CSS.
+- **Backend** : Laravel avec Inertia.js.
+- **Bases de données** :
+  - **MySQL** : Données principales (utilisateurs, habitats, services).
+  - **MongoDB** : Statistiques de consultation.
+- **Déploiement** :
+  - Hébergement : Hostinger (https://arcadia.ajd-world.com).
+  - Base de données MongoDB via MongoDB Atlas.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## **Prérequis**
+- **PHP** : Version 8.1 ou supérieure.
+- **Composer** : Pour gérer les dépendances PHP.
+- **Node.js** : Pour gérer les dépendances front-end (npm).
+- **MySQL** : Serveur local ou distant.
+- **MongoDB** : Cluster sur MongoDB Atlas.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## **Installation et configuration**
 
-## Contributing
+### **Étape 1 : Cloner le dépôt**
+Clonez le dépôt GitHub :
+```bash
+git clone https://github.com/joakmannn/arcardiaZoo.git
+cd arcardiaZoo
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### **Étape 2 : Installer les dépendances**
+- **Backend** :
 
-## Code of Conduct
+  composer install
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Frontend** :
 
-## Security Vulnerabilities
+  npm install
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+### **Étape 3 : Configurer l’environnement**
+Créez un fichier `.env` à partir du modèle fourni :
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+cp .env.example .env
+
+**Modifiez les paramètres du fichier `.env` pour refléter la configurations MySQL et MongoDB** :
+
+APP_NAME=Arcadia
+APP_ENV=production
+APP_DEBUG=true
+APP_URL=https://arcadia.ajd-world.com/
+
+DB_CONNECTION=mysql
+DB_HOST=193.203.168.141
+DB_PORT=3306
+DB_DATABASE=u724324663_arcadia_zoo
+DB_USERNAME=u724324663_adminjose
+DB_PASSWORD=Arcadiazoo13
+
+DB_CONNECTION_MONGODB=mongodb
+MONGODB_URI=mongodb+srv://josearcadia:arcadiazoo@cluster0.0croj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+
+### **Étape 4 : Configurer la base de données**
+- **Créer les tables MySQL** :
+
+  php artisan migrate
+
+- **Ajouter des données initiales** :
+
+  php artisan db:seed
+  
+
+### **Étape 5 : Lancer l’application en local**
+- **Backend** :
+
+  php artisan serve
+
+- **Frontend** (mode développement) :
+
+  npm run dev
+
+L’application sera accessible à l’adresse : [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+---
+
+## **Déploiement**
+
+Pour déployer l’application sur un serveur en production :
+
+1. **Préparer les assets pour la production** :
+
+   npm run build
+
+2. **Téléverser les fichiers** sur le serveur Hostinger :
+   - Assurez-vous que tous les fichiers sont dans le dossier approprié (`public_html`).
+3. **Configurer les bases de données** :
+   - **MySQL** : Importez le fichier SQL si nécessaire.
+   - **MongoDB** : Configurez les accès et autorisations dans MongoDB Atlas.
+4. **Mettre à jour les caches Laravel** :
+
+   php artisan config:cache
+   php artisan route:cache
+
+---
+
+## **Informations de connexion**
+- **URL de production** : [https://arcadia.ajd-world.com](https://arcadia.ajd-world.com)
+- **Base de données MySQL** :
+  - Hôte : `193.203.168.141`
+  - Base de données : `u724324663_arcadia_zoo`
+  - Utilisateur : `u724324663_adminjose`
+  - Mot de passe : `Arcadiazoo13`
+- **Base de données MongoDB** :
+  - URI : `mongodb+srv://josearcadia:arcadiazoo@cluster0.0croj.mongodb.net`
+
+---
+
+## **Contribution**
+Pour contribuer :
+1. Forkez le dépôt.
+2. Créez une branche pour vos modifications :
+
+   git checkout -b nouvelle-fonctionnalite
+3. Soumettez une pull request pour révision.
+
+---
+
+## **Auteurs**
+- **Joakmann** – Développeur principal de l’application.
+
+---
+
+## **Licence**
+Ce projet est sous licence [MIT](https://opensource.org/licenses/MIT).
