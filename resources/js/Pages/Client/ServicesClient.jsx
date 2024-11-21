@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import useInViewAnimation from './useInViewAnimation';
 
@@ -6,9 +6,24 @@ const ServicesClient = ({ isHovered }) => {
   const { services } = usePage().props;
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  // Use the in-view hook to detect when the component enters the viewport
+  // Utiliser le hook pour détecter quand la section est visible (désactivé sur petits écrans)
   const [ref, isInView] = useInViewAnimation(0.2);
+
+  useEffect(() => {
+    // Détecte si la largeur de l'écran est inférieure à 768px
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    handleResize(); // Vérifie immédiatement la taille de l'écran
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     setIsLocked(true);
@@ -22,11 +37,11 @@ const ServicesClient = ({ isHovered }) => {
 
   return (
     <div
-      ref={ref}
+      ref={!isSmallScreen ? ref : null} // Désactive le hook d'animation sur petits écrans
       id="servicesClient"
       className={`flex flex-col rounded-xl items-center justify-center w-full transition-all duration-1000 ease-in-out transform ${
-        isInView ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
-      } ${isLocked ? 'bg-custom-color' : 'bg-white'}`}
+        !isSmallScreen && isInView ? 'translate-x-0 opacity-100' : '' // Animation uniquement sur grands écrans
+      } ${isSmallScreen || isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'} ${isLocked ? 'bg-custom-color' : 'bg-white'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => setIsExpanded(!isExpanded)}
@@ -40,7 +55,7 @@ const ServicesClient = ({ isHovered }) => {
         className={`text-7xl mt-7 font-bold cursor-pointer transition-colors duration-300 ${
           isLocked ? 'text-white' : 'text-black'
         }`}
-        style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }} // Ombre portée ajoutée
+        style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }}
       >
         Découvrez nos services
       </h1>
@@ -48,12 +63,16 @@ const ServicesClient = ({ isHovered }) => {
         className={`mt-2 text-center transition-colors duration-300 ${
           isLocked ? 'text-white' : 'text-black'
         }`}
-        style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.5)' }} // Ombre portée ajoutée
+        style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.5)' }}
       >
         Des services sur mesure pour vous accompagner dans votre expérience au parc.
       </p>
 
-      <div className={`transition-all duration-1000 ease-in-out w-full ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+      <div
+        className={`transition-all duration-1000 ease-in-out w-full ${
+          isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        }`}
+      >
         {Array.isArray(services) && services.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
             {services.map((service) => (
@@ -62,12 +81,14 @@ const ServicesClient = ({ isHovered }) => {
 
                 <h3
                   className="text-xl font-bold mb-1"
-                  style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.4)' }} // Ombre portée sur le titre de chaque service
+                  style={{ textShadow: '1px 1px 5px rgba(0, 0, 0, 0.4)' }}
                 >
                   {service.name}
                 </h3>
                 <p className="text-sm">{service.description}</p>
-                <p className="mt-1 text-gray-600 text-sm">Heures d'ouverture : {service.start_time} - {service.end_time}</p>
+                <p className="mt-1 text-gray-600 text-sm">
+                  Heures d'ouverture : {service.start_time} - {service.end_time}
+                </p>
 
                 <Link
                   href={`/services/${service.id}`}

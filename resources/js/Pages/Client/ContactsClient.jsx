@@ -56,8 +56,9 @@ const ContactsClient = ({ isHovered }) => {
         Nous contacter
       </h2>
 
-      <p className="mt-4 mb-10 text-white text-lg">
-        Pour toute question ou information, contactez-nous.
+      {/* Centrer le texte "Pour toute question ou information, contactez-nous." */}
+      <p className="mt-4 mb-10 text-white text-lg text-center">
+        Pour toute question ou information.
       </p>
 
       <div

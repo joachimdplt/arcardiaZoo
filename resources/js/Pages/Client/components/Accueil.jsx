@@ -11,26 +11,28 @@ const Accueil = ({ approvedReviews = [], animals = [], habitats = [], services =
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768);
     };
-    handleResize(); 
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleMouseEnter = (id) => {
-    setActiveElement(id);
+    if (!isSmallScreen) setActiveElement(id);
   };
 
   const handleMouseLeave = () => {
-    setActiveElement(null);
+    if (!isSmallScreen) setActiveElement(null);
   };
 
   return (
     <div id="accueil" className="relative min-h-screen overflow-hidden">
       <div className={`flex ${isSmallScreen ? 'flex-col' : 'flex-col sm:flex-row'} min-h-screen overflow-hidden`}>
-        
+        {/* Section ArcadiaBlue */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            activeElement === 'blue' || isSmallScreen ? 'w-full h-1/3 sm:h-screen' : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
+            activeElement === 'blue' || isSmallScreen
+              ? 'w-full h-1/3 sm:h-screen'
+              : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
           } flex items-center justify-center bg-cover`}
           onMouseEnter={() => handleMouseEnter('blue')}
           onMouseLeave={handleMouseLeave}
@@ -38,26 +40,35 @@ const Accueil = ({ approvedReviews = [], animals = [], habitats = [], services =
           <ArcadiaBlue isActive={activeElement === 'blue' || isSmallScreen} />
         </div>
 
+        {/* Section Wildlife */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            activeElement === 'habitats' || isSmallScreen ? 'w-full h-1/3 sm:h-screen bg-white' : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
+            activeElement === 'habitats' || isSmallScreen
+              ? 'w-full h-1/3 sm:h-screen bg-white'
+              : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
           } flex items-center justify-center`}
           onMouseEnter={() => handleMouseEnter('habitats')}
           onMouseLeave={handleMouseLeave}
         >
-          <Wildlife habitats={habitats} animals={animals} services={services} />
+          <Wildlife habitats={habitats} services={services} />
         </div>
 
+        {/* Section ReviewsClientShow */}
         <div
           className={`transition-all duration-500 ease-in-out ${
-            activeElement === 'reviews' || isSmallScreen ? 'w-full h-1/3 sm:h-screen bg-white' : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
+            activeElement === 'reviews' || isSmallScreen
+              ? 'w-full h-1/3 sm:h-screen bg-white'
+              : 'w-full sm:w-1/3 h-1/3 sm:h-screen'
           } flex items-center justify-center`}
           style={{ backgroundColor: activeElement === 'reviews' || isSmallScreen ? 'white' : '#848C42' }}
           onMouseEnter={() => handleMouseEnter('reviews')}
           onMouseLeave={handleMouseLeave}
         >
           <div className="flex items-center justify-center w-full h-full">
-            <ReviewsClientShow isHovered={activeElement === 'reviews' || isSmallScreen} reviews={approvedReviews} />
+            <ReviewsClientShow
+              isHovered={activeElement === 'reviews' || isSmallScreen}
+              reviews={approvedReviews}
+            />
           </div>
         </div>
       </div>

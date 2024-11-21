@@ -45,13 +45,13 @@ const ReviewsClient = ({ isHovered }) => {
     >
       <h2
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-5xl mt-10 font-bold cursor-pointer text-white transition-transform duration-300"
+        className="text-5xl mt-10 font-bold cursor-pointer text-white transition-transform duration-300 text-center mx-auto"
         style={{ textShadow: '2px 2px 8px rgba(0, 0, 0, 0.6)' }} // Ombre portée sur le titre principal
       >
         Votre avis compte
       </h2>
 
-      <p className="mt-4 mb-10 text-white text-lg">
+      <p className="mt-4 mb-10 text-white text-lg text-center">
         Partagez votre expérience avec nous.
       </p>
 

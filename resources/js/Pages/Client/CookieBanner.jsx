@@ -37,36 +37,40 @@ const CookieBanner = () => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '3rem',
+            padding: '1rem 2rem',
             opacity: 1,
             transition: '0.5s',
+            zIndex: 9999,
         },
         cookiesText: {
             color: 'white',
             fontSize: '1.4rem',
             fontFamily: 'Arial, Helvetica, sans-serif',
+            flex: 1,  // Allow text to take up available space
+            marginRight: '1rem',  // Add spacing between the text and the buttons
         },
         cookiesBtn: {
             display: 'flex',
+            flexWrap: 'wrap',  // Allow buttons to stack on smaller screens
+            gap: '0.5rem', // Add space between buttons
         },
         btn: {
             color: 'white',
-            padding: '1rem',
+            padding: '0.75rem 1.5rem',
             border: 'none',
             borderRadius: '10px',
             cursor: 'pointer',
+            fontSize: '1rem',  // Make font size more adaptable
         },
         btnSuccess: {
             backgroundColor: '#1e2337',
-            marginRight: '1rem',
         },
         btnDeny: {
             backgroundColor: 'grey',
-            marginRight: '1rem',
         },
         btnSettings: {
             backgroundColor: '#555',
-        }
+        },
     };
 
     return (

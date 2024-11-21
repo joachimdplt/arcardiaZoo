@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 import Navigation from './components/Navigation';
 import ServicesClient from './ServicesClient';
@@ -13,18 +13,31 @@ import useInViewAnimation from './useInViewAnimation';
 const Home = () => {
     const { services, habitats, animals, approvedReviews } = usePage().props;
     const [activeSection, setActiveSection] = useState(null);
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-    const [servicesRef, isServicesInView] = useInViewAnimation(0.5); 
+    const [servicesRef, isServicesInView] = useInViewAnimation(0.5);
     const [habitatsRef, isHabitatsInView] = useInViewAnimation(0.5);
     const [reviewsRef, isReviewsInView] = useInViewAnimation(0.5);
     const [contactsRef, isContactsInView] = useInViewAnimation(0.5);
 
+    // Détecter les petits écrans
+    useEffect(() => {
+        const updateScreenSize = () => setIsSmallScreen(window.innerWidth < 768);
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        return () => window.removeEventListener('resize', updateScreenSize);
+    }, []);
+
     const handleMouseEnter = (section) => {
-        setActiveSection(section);
+        if (!activeSection) setActiveSection(section); // Fixer la section active si aucune n'est sélectionnée
     };
 
     const handleMouseLeave = () => {
-        setActiveSection(null);
+        // Supprimer cette ligne pour garder la section ouverte
+    };
+
+    const selectSection = (section) => {
+        setActiveSection(section); // Fixer la section sélectionnée
     };
 
     return (
@@ -37,28 +50,32 @@ const Home = () => {
                     <div
                         ref={servicesRef}
                         className={`flex justify-center items-center transition-all ${
-                            isServicesInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
-                        } ${activeSection === 'services' ? 'w-full' : 'w-full md:w-1/2'} py-8 px-4`}
+                            isSmallScreen || isServicesInView || activeSection === 'services'
+                                ? 'opacity-100 translate-x-0 w-full'
+                                : 'opacity-0 translate-x-10 w-full md:w-1/2'
+                        } py-8 px-4`}
                         style={{
-                            transitionDuration: isServicesInView ? (window.innerWidth < 768 ? '1500ms' : '700ms') : '700ms',
+                            transitionDuration: isSmallScreen || activeSection === 'services' ? '0ms' : '700ms',
                         }}
                         onMouseEnter={() => handleMouseEnter('services')}
-                        onMouseLeave={handleMouseLeave}
+                        onClick={() => selectSection('services')}
                     >
                         <ServicesClient />
                     </div>
-                    
+
                     <div
                         id="habitats"
                         ref={habitatsRef}
                         className={`flex justify-center items-center transition-all ${
-                            isHabitatsInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
-                        } ${activeSection === 'habitats' ? 'w-full' : 'w-full md:w-1/2'} py-8 px-4`}
+                            isHabitatsInView || activeSection === 'habitats'
+                                ? 'opacity-100 translate-x-0 w-full'
+                                : 'opacity-0 translate-x-10 w-full md:w-1/2'
+                        } py-8 px-4`}
                         style={{
-                            transitionDuration: isHabitatsInView ? (window.innerWidth < 768 ? '1500ms' : '700ms') : '700ms',
+                            transitionDuration: isHabitatsInView || activeSection === 'habitats' ? '700ms' : '700ms',
                         }}
                         onMouseEnter={() => handleMouseEnter('habitats')}
-                        onMouseLeave={handleMouseLeave}
+                        onClick={() => selectSection('habitats')}
                     >
                         <HabitatsClient isHovered={activeSection === 'habitats'} />
                     </div>
@@ -68,26 +85,30 @@ const Home = () => {
                     <div
                         ref={reviewsRef}
                         className={`flex-1 flex justify-center items-center transition-all ${
-                            isReviewsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                            isReviewsInView || activeSection === 'reviews'
+                                ? 'opacity-100 translate-y-0'
+                                : 'opacity-0 translate-y-10'
                         } py-8 px-4`}
                         style={{
-                            transitionDuration: isReviewsInView ? (window.innerWidth < 768 ? '1500ms' : '700ms') : '700ms',
+                            transitionDuration: isReviewsInView || activeSection === 'reviews' ? '700ms' : '700ms',
                         }}
                         onMouseEnter={() => handleMouseEnter('reviews')}
-                        onMouseLeave={handleMouseLeave}
+                        onClick={() => selectSection('reviews')}
                     >
                         <ReviewsClient isHovered={activeSection === 'reviews'} />
                     </div>
                     <div
                         ref={contactsRef}
                         className={`flex-1 flex justify-center items-center transition-all ${
-                            isContactsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                            isContactsInView || activeSection === 'contacts'
+                                ? 'opacity-100 translate-y-0'
+                                : 'opacity-0 translate-y-10'
                         } py-8 px-4`}
                         style={{
-                            transitionDuration: isContactsInView ? (window.innerWidth < 768 ? '1500ms' : '700ms') : '700ms',
+                            transitionDuration: isContactsInView || activeSection === 'contacts' ? '700ms' : '700ms',
                         }}
                         onMouseEnter={() => handleMouseEnter('contacts')}
-                        onMouseLeave={handleMouseLeave}
+                        onClick={() => selectSection('contacts')}
                     >
                         <ContactsClient isHovered={activeSection === 'contacts'} />
                     </div>
