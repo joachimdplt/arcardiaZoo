@@ -4,7 +4,6 @@ import { useForm, Link } from '@inertiajs/react';
 export default function AnimalCreate({ breeds, habitats }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
-        status: '',
         breed_id: '',
         images: [],  // Champ pour les images
         habitat_id: '',
@@ -15,7 +14,6 @@ export default function AnimalCreate({ breeds, habitats }) {
 
         const formData = new FormData();
         formData.append('name', data.name);
-        formData.append('status', data.status);
         formData.append('breed_id', data.breed_id);
         formData.append('habitat_id', data.habitat_id);
 
@@ -46,17 +44,6 @@ export default function AnimalCreate({ breeds, habitats }) {
                         onChange={e => setData('name', e.target.value)}
                     />
                     {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                </div>
-
-                <div className="mb-4">
-                    <label className="block text-sm font-bold mb-2">Statut</label>
-                    <input
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        value={data.status}
-                        onChange={e => setData('status', e.target.value)}
-                    />
-                    {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status}</p>}
                 </div>
 
                 <div className="mb-4">

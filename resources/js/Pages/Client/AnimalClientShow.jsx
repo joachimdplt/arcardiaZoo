@@ -58,7 +58,6 @@ const AnimalClientShow = () => {
         <div className="p-4 bg-gray-100 rounded shadow">
           <h3 className="text-2xl font-semibold mb-4">Détails</h3>
           <p className="text-xl mb-4"><strong>Race :</strong> {animal.breed?.label}</p>
-          <p className="text-xl mb-4"><strong>État :</strong> {animal.status}</p>
         </div>
 
         {/* Section pour l'Alimentation */}

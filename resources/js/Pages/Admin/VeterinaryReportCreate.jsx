@@ -1,41 +1,37 @@
 import React, { useState } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 
-export default function VeterinaryReportCreate({ animals = [], veterinarians = [] }) {
+export default function VeterinaryReportCreate({ animals = [], veterinarians = [], statuses = [] }) {
     const { data, setData, post, processing, errors } = useForm({
         date: '',
-        details: '', // Champ pour les détails du rapport
+        details: '',
         animal_id: '',
-        user_id: '', // Vétérinaire assigné
-        habitat_id: '',  // Champ pour l'habitat (lecture seule pour l'habitat par défaut)
-        habitat_comment: '', // Champ pour le commentaire sur l'habitat
-        feed_type: '', // Type d'alimentation recommandé
-        feed_quantity: '' // Quantité de nourriture recommandée
+        user_id: '',
+        habitat_id: '',
+        habitat_comment: '',
+        feed_type: '',
+        feed_quantity: '',
+        status: '', // Champ pour le statut
     });
 
-    const [habitats, setHabitats] = useState([]);
     const [selectedHabitat, setSelectedHabitat] = useState('');
 
-    // Fonction pour charger l'habitat actuel de l'animal sélectionné
     const handleAnimalChange = async (e) => {
         const animalId = e.target.value;
         setData('animal_id', animalId);
-        
+
         if (animalId) {
-            // Requête pour charger l’habitat actuel de l’animal
             const response = await fetch(`/admin/animals/${animalId}/current-habitat`);
             const data = await response.json();
 
-            // Définir l'habitat actuel pour l'animal sélectionné
             setSelectedHabitat(data.current_habitat);
-            setData('habitat_id', data.current_habitat?.id || ''); // Définit l'ID de l'habitat actuel
+            setData('habitat_id', data.current_habitat?.id || '');
         } else {
             setSelectedHabitat('');
             setData('habitat_id', '');
         }
     };
 
-    // Soumission du formulaire
     const handleSubmit = (e) => {
         e.preventDefault();
         post('/admin/veterinary-reports', data);
@@ -76,7 +72,23 @@ export default function VeterinaryReportCreate({ animals = [], veterinarians = [
                     {errors.animal_id && <p className="text-red-500 text-xs mt-1">{errors.animal_id}</p>}
                 </div>
 
-               
+                {/* Champ pour le statut */}
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-2">État de santé</label>
+                    <select
+                        className="w-full p-2 border rounded"
+                        value={data.status}
+                        onChange={(e) => setData('status', e.target.value)}
+                    >
+                        <option value="">Sélectionner un état de santé</option>
+                        {statuses.map((status) => (
+                            <option key={status} value={status}>
+                                {status === 'healthy' ? 'En bonne santé' : status === 'sick' ? 'Malade' : 'Critique'}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status}</p>}
+                </div>
 
                 {/* Commentaire sur l'habitat */}
                 <div className="mb-4">

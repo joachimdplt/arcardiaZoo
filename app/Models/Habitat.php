@@ -10,7 +10,7 @@ class Habitat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'comment'];
+    protected $fillable = ['name', 'description', ];
 
     // Un habitat peut avoir plusieurs animaux
     public function animals()

@@ -143,7 +143,6 @@ public function show($animalId)
   
       $request->validate([
           'name' => 'required|string|max:255',
-          'status' => 'required|string',
           'habitat_id' => 'required|array',
           'habitat_id.*' => 'exists:habitats,id',
           'breed_id' => 'required|exists:breeds,id',
@@ -151,7 +150,7 @@ public function show($animalId)
           'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
       ]);
   
-      $animal = Animal::create($request->only('name', 'status', 'breed_id'));
+      $animal = Animal::create($request->only('name', 'breed_id'));
       $animal->habitats()->attach($request->input('habitat_id'));
   
       if ($request->hasFile('images')) {
@@ -182,7 +181,6 @@ public function show($animalId)
 
     $request->validate([
         'name' => 'nullable|max:255',
-        'status' => 'nullable',
         'breed_id' => 'nullable|exists:breeds,id',
         'habitat_id' => 'required|array',
         'habitat_id.*' => 'exists:habitats,id',
@@ -191,7 +189,7 @@ public function show($animalId)
     ]);
 
     $animal = Animal::findOrFail($id);
-    $animal->update($request->only('name', 'status', 'breed_id'));
+    $animal->update($request->only('name', 'breed_id'));
     $animal->habitats()->sync($request->input('habitat_id'));
 
     if ($request->hasFile('images')) {

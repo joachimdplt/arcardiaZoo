@@ -15,33 +15,43 @@ export default function AnimalShow({ animal, lastVeterinaryReport, userRoles }) 
             <div className="bg-white shadow-md rounded p-6">
                 <h2 className="text-2xl font-bold mb-4">Nom: {animal.name}</h2>
                 <p className="mb-2"><strong>Race:</strong> {animal.breed ? animal.breed.label : 'N/A'}</p>
-                <p className="mb-2"><strong>Statut:</strong> {animal.status}</p>
                 <p className="mb-2"><strong>Habitats:</strong> {animal.habitats && animal.habitats.length > 0 ? animal.habitats.map(habitat => habitat.name).join(', ') : 'Aucun habitat'}</p>
 
-                <div className="mt-4">
-                    <h3 className="text-lg font-bold mb-2">Commentaire(s) sur l'habitat:</h3>
-                    {animal.habitats && animal.habitats.length > 0 ? (
-                        <table className="table-auto w-full">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-2">Nom de l'habitat</th>
-                                    <th className="px-4 py-2">Commentaire</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {animal.habitats.map((habitat) => (
-                                    <tr key={habitat.id}>
-                                        <td className="border px-4 py-2">{habitat.name}</td>
-                                        <td className="border px-4 py-2">{habitat.comment ? habitat.comment : 'Aucun commentaire'}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>Aucun habitat pour cet animal.</p>
-                    )}
-                </div>
+                {/* Dernier commentaire sur l'habitat */}
+                {lastVeterinaryReport?.habitat_comment && (
+                    <div className="mt-4 bg-yellow-100 p-4 rounded">
+                        <h3 className="text-lg font-bold mb-2">Dernier commentaire sur l'habitat</h3>
+                        <p>{lastVeterinaryReport.habitat_comment}</p>
+                    </div>
+                )}
 
+                {/* Dernier rapport vétérinaire */}
+                {lastVeterinaryReport ? (
+                    <div className="mt-4 bg-gray-100 p-4 rounded">
+                        <h3 className="text-lg font-bold mb-2">Dernier rapport vétérinaire</h3>
+                        <p className="mb-2">
+                            <strong>Date:</strong> {new Date(lastVeterinaryReport.date).toLocaleDateString()}
+                        </p>
+                     
+                        <p className="mb-2">
+                            <strong>Détails:</strong> {lastVeterinaryReport.details || 'Aucun détail'}
+                        </p>
+                        <p className="mb-2">
+                            <strong>État de santé:</strong>{' '}
+                            {lastVeterinaryReport.status === 'healthy'
+                                ? 'En bonne santé'
+                                : lastVeterinaryReport.status === 'sick'
+                                ? 'Malade'
+                                : lastVeterinaryReport.status === 'critical'
+                                ? 'Critique'
+                                : 'Non spécifié'}
+                        </p>
+                    </div>
+                ) : (
+                    <p className="text-gray-500 mt-4">Aucun rapport vétérinaire disponible.</p>
+                )}
+
+                {/* Images */}
                 <div className="mt-4">
                     <h3 className="text-lg font-bold mb-2">Images:</h3>
                     {animal.images && animal.images.length > 0 ? (
@@ -61,6 +71,7 @@ export default function AnimalShow({ animal, lastVeterinaryReport, userRoles }) 
                     )}
                 </div>
 
+                {/* Section alimentation */}
                 {lastVeterinaryReport && (
                     <AnimalFood 
                         feedType={lastVeterinaryReport.feed_type} 
@@ -102,15 +113,6 @@ export default function AnimalShow({ animal, lastVeterinaryReport, userRoles }) 
                     >
                         Voir les rapports vétérinaires
                     </Link>
-
-                    {isAdmin && (
-                        <Link
-                            href={`/admin/animals/${animal.id}/edit`}
-                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                        >
-                            Modifier Statut
-                        </Link>
-                    )}
                 </div>
             </div>
 

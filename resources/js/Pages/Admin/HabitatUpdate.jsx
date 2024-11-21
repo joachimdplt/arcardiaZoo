@@ -37,8 +37,6 @@ export default function HabitatUpdate({ habitat, existingImages }) {
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('description', data.description);
-        formData.append('location', data.location);
-        formData.append('comment', data.comment);
         formData.append('_method', 'put');
 
         // Ajouter les images dans formData
@@ -75,28 +73,6 @@ export default function HabitatUpdate({ habitat, existingImages }) {
                     {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-sm font-bold mb-2">Emplacement</label>
-                    <input
-                        type="text"
-                        className="w-full p-2 border rounded"
-                        value={data.location}
-                        onChange={e => setData('location', e.target.value)}
-                    />
-                    {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
-                </div>
-
-                <div className="mb-4">
-                    <label className="block text-sm font-bold mb-2">Commentaire (optionnel)</label>
-                    <textarea
-                        className="w-full p-2 border rounded"
-                        value={data.comment}
-                        onChange={e => setData('comment', e.target.value)}
-                    />
-                    {errors.comment && <p className="text-red-500 text-xs mt-1">{errors.comment}</p>}
-                </div>
-
-                {/* Affichage des images actuelles */}
                 <div className="mb-4">
                     <h3 className="text-lg font-bold mb-2">Images actuelles</h3>
                     {currentImages.length > 0 ? (

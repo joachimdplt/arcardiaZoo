@@ -38,17 +38,15 @@ export default function Habitats({ habitats, userRoles }) {
                     <tr className='bg-gray-200'>
                         <th className="py-2 px-4 border-b text-left">Nom</th>
                         <th className="py-2 px-4 border-b text-left">Description</th>
-                        <th className="py-2 px-4 border-b text-left">Commentaire Habitat</th>
                         <th className="py-2 px-4 border-b text-left">Images</th> {/* Nouvelle colonne pour les images */}
                         <th className="py-2 px-4 border-b text-left">Actions</th>
-                    </tr>
+                    </tr> 
                 </thead>
                 <tbody>
                     {habitats.map(habitat => (
                         <tr key={habitat.id}>
                             <td className="py-2 px-4 border-b">{habitat.name}</td>
                             <td className="py-2 px-4 border-b">{habitat.description}</td>
-                            <td className="py-2 px-4 border-b">{habitat.comment}</td>
 
                             {/* Colonne pour les images associées */}
                             <td className="py-2 px-4 border-b">

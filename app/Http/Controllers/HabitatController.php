@@ -127,8 +127,6 @@ class HabitatController extends Controller
         $request->validate([
             'name' => 'nullable|max:255',
             'description' => 'nullable',
-            'location' => 'nullable',
-            'comment' => 'nullable',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -165,14 +163,12 @@ public function update(Request $request, $id)
     $request->validate([
         'name' => 'nullable|max:255',
         'description' => 'nullable',
-        'location' => 'nullable',
-        'comment' => 'nullable',
         'images' => 'nullable|array',
         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
     $habitat = Habitat::findOrFail($id);
-    $habitat->update($request->only('name', 'description', 'location', 'comment'));
+    $habitat->update($request->only('name', 'description'));
 
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $image) {
@@ -202,13 +198,11 @@ public function store(Request $request)
     $request->validate([
         'name' => 'required|string|max:255',
         'description' => 'required|string',
-        'location' => 'nullable|string|max:255',
-        'comment' => 'nullable|string',
         'images' => 'nullable|array',
         'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
-    $habitat = Habitat::create($request->only('name', 'description', 'location', 'comment'));
+    $habitat = Habitat::create($request->only('name', 'description'));
 
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $image) {

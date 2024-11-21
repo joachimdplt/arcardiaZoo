@@ -8,7 +8,7 @@ class Animal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'status', 'breed_id'];
+    protected $fillable = ['name', 'breed_id'];
 
 
 

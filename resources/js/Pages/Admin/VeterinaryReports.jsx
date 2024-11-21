@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 
 export default function VeterinaryReports({ reports = [], animals = [] }) {
-    const { userRoles } = usePage().props; // Récupère les rôles de l'utilisateur connecté
+    const { userRoles } = usePage().props;
     const [processing, setProcessing] = useState(false);
     const [selectedAnimal, setSelectedAnimal] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
 
     const isAdminOrEmployee = userRoles.includes('Admin') || userRoles.includes('Employee');
 
-    // Fonction pour gérer la suppression d'un rapport
     const handleDelete = (id) => {
         if (confirm('Voulez-vous vraiment supprimer ce rapport vétérinaire ?')) {
             setProcessing(true);
@@ -20,7 +19,6 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
         }
     };
 
-    // Fonction pour filtrer les rapports
     const filteredReports = reports.filter((report) => {
         const matchesAnimal = selectedAnimal ? report.animal?.id === parseInt(selectedAnimal) : true;
         const matchesDate = selectedDate ? report.date === selectedDate : true;
@@ -72,7 +70,6 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
                 </div>
             )}
 
-            {/* Tableau des rapports */}
             <table className="min-w-full bg-white shadow-md rounded my-6">
                 <thead>
                     <tr className="bg-gray-200">
@@ -80,15 +77,12 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
                         <th className="py-3 px-4 border-b text-left">Animal</th>
                         <th className="py-3 px-4 border-b text-left">Vétérinaire</th>
                         <th className="py-3 px-4 border-b text-left">Détails</th>
-                        <th className="py-3 px-4 border-b text-left">Type de nouriture</th>
-                        <th className="py-3 px-4 border-b text-left">Quantité de nouriture : grammes</th>
-
-
+                        <th className="py-3 px-4 border-b text-left">Type de nourriture</th>
+                        <th className="py-3 px-4 border-b text-left">Quantité de nourriture</th>
                         <th className="py-3 px-4 border-b text-left">Habitat</th>
                         <th className="py-3 px-4 border-b text-left">Commentaire habitat</th>
-
+                        <th className="py-3 px-4 border-b text-left">Statut</th> {/* Nouvelle colonne */}
                         <th className="py-3 px-4 border-b text-left">Actions</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -101,18 +95,19 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
                                 <td className="py-2 px-4 border-b align-middle">{report.details}</td>
                                 <td className="py-2 px-4 border-b align-middle">{report.feed_type}</td>
                                 <td className="py-2 px-4 border-b align-middle">{report.feed_quantity}</td>
-
-
-
-                                {/* Affichage des habitats */}
                                 <td className="py-2 px-4 border-b align-middle">
                                     {report.animal && report.animal.habitats.length > 0
                                         ? report.animal.habitats.map(habitat => habitat.name).join(', ')
                                         : 'Aucun habitat'}
                                 </td>
-
                                 <td className="py-2 px-4 border-b align-middle">{report.habitat_comment}</td>
-
+                                <td className="py-2 px-4 border-b align-middle">
+                                    {report.status === 'healthy'
+                                        ? 'En bonne santé'
+                                        : report.status === 'sick'
+                                        ? 'Malade'
+                                        : 'Critique'}
+                                </td> {/* Affichage du statut */}
                                 <td className="py-2 px-4 border-b align-middle flex space-x-4">
                                     <Link
                                         href={`/admin/veterinary-reports/${report.id}`}
@@ -120,7 +115,6 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
                                     >
                                         Voir
                                     </Link>
-                                    {/* Affiche les boutons Modifier et Supprimer uniquement pour les vétérinaires */}
                                     {!isAdminOrEmployee && (
                                         <>
                                             <Link
@@ -143,7 +137,7 @@ export default function VeterinaryReports({ reports = [], animals = [] }) {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7" className="text-center py-4">
+                            <td colSpan="10" className="text-center py-4">
                                 Aucun rapport trouvé
                             </td>
                         </tr>
