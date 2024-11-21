@@ -61,7 +61,7 @@ const HabitatsClientShow = ({ habitat }) => {
 
       <div className="mt-8">
         <Link
-          href="/client#habitatsClient"
+          href="/#habitats"
           className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
         >
           Retour aux habitats

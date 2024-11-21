@@ -30,27 +30,25 @@ class HabitatController extends Controller
     }
    
     public function recordClick($id)
-    {
-        try {
-            // Enregistrer le clic pour l'habitat dans MongoDB
-            $this->collection->updateOne(
-                ['habitat_id' => $id],
-                ['$inc' => ['click_count' => 1]],
-                ['upsert' => true]
-            );
+{
+    try {
+        // Enregistrer le clic pour l'habitat dans MongoDB
+        $this->collection->updateOne(
+            ['habitat_id' => $id],
+            ['$inc' => ['click_count' => 1]],
+            ['upsert' => true]
+        );
 
-            // Récupérer les données de l'habitat après l'enregistrement du clic
-            $habitat = Habitat::with('animals', 'images')->findOrFail($id);
+        // Récupérer les données de l'habitat après l'enregistrement du clic
+        $habitat = Habitat::with('animals', 'images')->findOrFail($id);
 
-            // Rediriger vers la page de l'habitat dans le dossier Client
-            return Inertia::render('Client/HabitatsClientShow', [
-                'habitat' => $habitat
-            ]);
-        } catch (\Exception $e) {
-            \Log::error("Erreur lors de l'enregistrement du clic pour l'habitat : " . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors de l\'enregistrement du clic'], 500);
-        }
+        // Rediriger vers la page de l'habitat (compatible Inertia)
+        return back()->with('success', 'Clic enregistré avec succès.');
+    } catch (\Exception $e) {
+        \Log::error("Erreur lors de l'enregistrement du clic pour l'habitat : " . $e->getMessage());
+        return back()->with('error', 'Erreur lors de l\'enregistrement du clic.');
     }
+}
     public function showCombinedStats()
     {
         // Obtenir les statistiques des habitats
