@@ -9,9 +9,7 @@ class Animal extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'breed_id'];
-
-
-
+    
     // Relation avec les habitats (plusieurs habitats pour un animal)
     public function habitats()
     {

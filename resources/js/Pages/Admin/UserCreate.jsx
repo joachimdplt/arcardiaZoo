@@ -82,6 +82,7 @@ export default function UserCreate({ roles }) {
                 </div>
                 <div className="mb-3">
                     <label className="block text-sm font-semibold mb-1">Rôles</label>
+
                     <select
                         className="w-1/3 p-1 border rounded"
                         value={data.roles[0] || ''}
@@ -94,6 +95,8 @@ export default function UserCreate({ roles }) {
                             </option>
                         ))}
                     </select>
+
+                    
                     {errors.roles && <p className="text-red-500 text-xs mt-1">{errors.roles}</p>}
                 </div>
                 <button
