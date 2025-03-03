@@ -1,0 +1,19 @@
+/* parallaxStyles.css */
+
+.parallax-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Space between sections */
+    overflow: hidden;
+}
+
+.parallax-item {
+    opacity: 0;
+    transition: opacity 0.5s ease-in, transform 0.5s ease-out;
+    will-change: transform, opacity;
+}
+
+.parallax-item.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
