@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 
-export default function Reviews({ pendingReviews = [], approvedReviews = [], userRoles = [] }) {
-    const [loadingIds, setLoadingIds] = useState({}); // Suivre l'état de chargement par ID d'avis
+export default function Reviews({ pendingReviews = [], approvedReviews = [], userRole = null }) {
+    const [loadingIds, setLoadingIds] = useState({});
 
     // Vérifier si l'utilisateur a le rôle "Employé"
-    const isEmployee = userRoles.includes('Employee');
+    const isEmployee = userRole === 'Employee';
 
     // Fonction pour approuver un avis
     const approveReview = (id) => {
